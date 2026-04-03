@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Rummy">
+<meta name="theme-color" content="#0f172a">
+<title>Rummy Scorer</title>
+<link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiUnVtbXkgU2NvcmVyIiwic2hvcnRfbmFtZSI6IlJ1bW15Iiwic3RhcnRfdXJsIjoiLiIsImRpc3BsYXkiOiJzdGFuZGFsb25lIiwiYmFja2dyb3VuZF9jb2xvciI6IiMwZjE3MmEiLCJ0aGVtZV9jb2xvciI6IiMwZjE3MmEifQ==">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=JetBrains+Mono:wght@600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#0f172a;--bg2:#1e293b;--card:rgba(255,255,255,0.06);
+  --border:rgba(255,255,255,0.08);--text:#e2e8f0;--muted:#64748b;--sub:#94a3b8;
+  --blue:#3b82f6;--blue-g:rgba(59,130,246,0.15);--green:#10b981;--green-g:rgba(16,185,129,0.12);
+  --red:#ef4444;--red-g:rgba(239,68,68,0.1);--amber:#f59e0b;--amber-g:rgba(245,158,11,0.15);
+  --gold:#fbbf24;
+}
+html,body{height:100%;overflow-x:hidden}
+body{
+  font-family:'Outfit',sans-serif;background:linear-gradient(160deg,var(--bg) 0%,var(--bg2) 50%,var(--bg) 100%);
+  color:var(--text);min-height:100vh;min-height:100dvh;
+  padding:env(safe-area-inset-top) 16px env(safe-area-inset-bottom);
+}
+.container{max-width:480px;margin:0 auto;padding:12px 0 24px}
+
+/* ===== SETUP SCREEN ===== */
+.setup{animation:fadeUp .4s ease}
+.setup-title{font-size:2.2rem;font-weight:900;text-align:center;margin:20px 0 4px;letter-spacing:-1px}
+.setup-sub{text-align:center;color:var(--sub);font-size:.85rem;margin-bottom:28px}
+.setup-section{margin-bottom:22px}
+.setup-label{font-weight:700;font-size:.85rem;color:var(--sub);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px}
+.player-inputs{display:flex;flex-direction:column;gap:8px}
+.player-row{display:flex;gap:8px;align-items:center;animation:fadeUp .3s ease backwards}
+.player-emoji-btn{
+  width:44px;height:44px;border-radius:10px;border:1.5px solid var(--border);
+  background:var(--card);font-size:1.3rem;cursor:pointer;display:flex;align-items:center;
+  justify-content:center;transition:all .15s;flex-shrink:0
+}
+.player-emoji-btn:active{transform:scale(.92)}
+.player-name-input{
+  flex:1;padding:11px 14px;border-radius:10px;border:1.5px solid var(--border);
+  background:rgba(0,0,0,.25);color:var(--text);font-family:'Outfit',sans-serif;
+  font-size:1rem;font-weight:600
+}
+.player-name-input:focus{outline:none;border-color:var(--blue)}
+.player-name-input::placeholder{color:var(--muted);font-weight:400}
+.remove-btn{
+  width:36px;height:36px;border-radius:8px;border:none;
+  background:var(--red-g);color:var(--red);font-size:1.1rem;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0
+}
+.add-player-btn{
+  width:100%;padding:12px;border-radius:10px;border:2px dashed rgba(59,130,246,.4);
+  background:rgba(59,130,246,.06);color:#60a5fa;font-size:.95rem;font-weight:700;
+  cursor:pointer;margin-top:4px;transition:all .15s
+}
+.add-player-btn:active{transform:scale(.98)}
+.start-btn{
+  width:100%;padding:16px;border-radius:14px;border:none;
+  background:linear-gradient(135deg,#3b82f6,#1d4ed8);color:#fff;
+  font-size:1.1rem;font-weight:800;cursor:pointer;margin-top:24px;
+  box-shadow:0 4px 24px rgba(59,130,246,.35);transition:all .15s;letter-spacing:.3px
+}
+.start-btn:active{transform:scale(.97)}
+.start-btn:disabled{opacity:.4;pointer-events:none}
+
+/* ===== EMOJI PICKER ===== */
+.emoji-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:100;
+  display:flex;align-items:flex-end;justify-content:center;animation:fadeIn .2s
+}
+.emoji-picker{
+  background:var(--bg2);border-radius:20px 20px 0 0;padding:20px 16px 32px;
+  width:100%;max-width:480px;max-height:60vh;overflow-y:auto;animation:slideUp .3s ease
+}
+.emoji-picker-title{font-weight:700;font-size:.9rem;color:var(--sub);margin-bottom:12px;text-align:center}
+.emoji-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:6px}
+.emoji-option{
+  aspect-ratio:1;border-radius:10px;border:none;background:var(--card);
+  font-size:1.4rem;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:all .1s
+}
+.emoji-option:active{transform:scale(.85);background:var(--blue-g)}
+
+/* ===== GAME SCREEN ===== */
+.game{animation:fadeUp .4s ease}
+.header{text-align:center;padding:8px 0 14px}
+.header-title{font-size:1.6rem;font-weight:900;letter-spacing:-.5px}
+.header-sub{font-size:.8rem;color:var(--sub);margin-top:2px}
+
+.banner{
+  border-radius:12px;padding:12px;text-align:center;font-weight:700;
+  font-size:1rem;margin-bottom:12px;animation:popIn .4s ease
+}
+.banner-elim{background:linear-gradient(135deg,var(--amber),var(--red))}
+.banner-round{background:linear-gradient(135deg,#059669,var(--green))}
+.banner-winner{
+  background:linear-gradient(135deg,#059669,var(--green));
+  border-radius:16px;padding:20px;margin-bottom:16px
+}
+.banner-winner .trophy{font-size:2.2rem}
+.banner-winner .name{font-size:1.3rem;font-weight:900;margin-top:4px}
+
+/* Leaderboard */
+.lb-card{
+  border-radius:12px;padding:12px 14px;margin-bottom:8px;position:relative;
+  overflow:hidden;border:1px solid var(--border);background:var(--card);transition:all .3s
+}
+.lb-card.leading{border-color:rgba(16,185,129,.3);background:var(--green-g)}
+.lb-card.out{border-color:rgba(239,68,68,.3);background:var(--red-g);opacity:.5}
+.lb-bar{position:absolute;left:0;top:0;bottom:0;transition:width .5s ease}
+.lb-inner{display:flex;align-items:center;justify-content:space-between;position:relative}
+.lb-left{display:flex;align-items:center;gap:10px}
+.lb-emoji{font-size:1.3rem}
+.lb-name{font-weight:700;font-size:.95rem}
+.lb-name.struck{text-decoration:line-through}
+.lb-hint{font-size:.7rem;color:var(--sub)}
+.lb-score{font-size:1.3rem;font-weight:800;font-family:'JetBrains Mono',monospace}
+
+/* Score Input */
+.add-round-btn{
+  width:100%;padding:14px;border-radius:12px;border:2px dashed rgba(59,130,246,.5);
+  background:rgba(59,130,246,.08);color:#60a5fa;font-size:1rem;font-weight:700;cursor:pointer
+}
+.input-panel{
+  background:rgba(255,255,255,.07);border-radius:16px;padding:16px;
+  border:1px solid rgba(255,255,255,.1);animation:fadeUp .25s ease
+}
+.input-panel-title{font-weight:700;font-size:.95rem;margin-bottom:14px}
+.input-player{margin-bottom:16px}
+.input-player-header{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.input-player-name{font-weight:600;font-size:.9rem}
+.input-selected{
+  margin-left:auto;background:var(--blue-g);border:1px solid rgba(59,130,246,.4);
+  padding:2px 10px;border-radius:6px;font-size:.85rem;font-weight:700;
+  color:#93c5fd;font-family:'JetBrains Mono',monospace
+}
+.quick-scores{display:flex;gap:5px;flex-wrap:wrap}
+.qs-btn{
+  padding:8px 10px;border-radius:8px;border:1.5px solid rgba(255,255,255,.12);
+  background:rgba(255,255,255,.04);color:var(--sub);font-size:.82rem;font-weight:600;
+  cursor:pointer;min-width:36px;font-family:'JetBrains Mono',monospace;transition:all .1s
+}
+.qs-btn.active{border-color:#60a5fa;background:var(--blue-g);color:#93c5fd}
+.qs-btn:active{transform:scale(.92)}
+.score-input{
+  width:100%;margin-top:6px;padding:8px 12px;border-radius:8px;
+  border:1px solid rgba(255,255,255,.1);background:rgba(0,0,0,.25);
+  color:var(--text);font-size:.95rem;font-weight:600;text-align:center;
+  font-family:'JetBrains Mono',monospace
+}
+.score-input:focus{outline:none;border-color:var(--blue)}
+.input-actions{display:flex;gap:8px;margin-top:14px}
+.btn-cancel{
+  flex:1;padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,.12);
+  background:transparent;color:var(--sub);font-size:.9rem;font-weight:600;cursor:pointer
+}
+.btn-save{
+  flex:2;padding:12px;border-radius:10px;border:none;
+  background:linear-gradient(135deg,#3b82f6,#2563eb);color:#fff;
+  font-size:.9rem;font-weight:700;cursor:pointer
+}
+.btn-save:active,.btn-cancel:active{transform:scale(.97)}
+
+/* History */
+.history{margin-top:20px}
+.history-title{font-weight:700;font-size:.85rem;color:var(--sub);margin-bottom:8px}
+.history-table{
+  background:rgba(255,255,255,.03);border-radius:12px;overflow:hidden;
+  border:1px solid var(--border)
+}
+.history-header,.history-row{display:grid;padding:7px 10px;font-size:.78rem}
+.history-header{background:rgba(255,255,255,.05);font-weight:700;color:var(--muted)}
+.history-row{border-top:1px solid rgba(255,255,255,.04)}
+.history-cell{text-align:center}
+.history-cell.zero{color:var(--green);font-weight:800}
+.history-cell.high{color:var(--red)}
+.history-cell.round-num{color:var(--muted);font-weight:600;text-align:left}
+
+/* Bottom */
+.bottom-actions{display:flex;gap:8px;margin-top:16px;padding-bottom:20px}
+.btn-sm{
+  flex:1;padding:10px;border-radius:10px;font-size:.82rem;cursor:pointer;
+  border:1px solid rgba(255,255,255,.1);background:transparent;color:var(--sub)
+}
+.btn-sm.danger{border-color:rgba(239,68,68,.3);background:var(--red-g);color:#f87171}
+.btn-sm:active{transform:scale(.97)}
+
+/* Animations */
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+@keyframes popIn{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
+</style>
+</head>
+<body>
+<div class="container" id="app"></div>
+
+<script>
+const CUTOFF = 220;
+const EMOJI_LIST = [
+  '🦁','🦊','🐯','🐼','🦋','🐺','🦅','🐬','🦈','🐙','🦄','🐲',
+  '🔥','⚡','💎','🌟','👑','🎯','🎲','🃏','♠️','♣️','♥️','♦️',
+  '🍀','🌶️','🍕','🎸','🚀','🏆','⭐','🌊','🎭','🎪','🧊','💫'
+];
+const QUICK_SCORES = [0, 10, 20, 25, 30, 40, 50, 80, 100];
+
+let state = loadState() || {
+  screen: 'setup',
+  players: [
+    { name: '', emoji: '🦁' },
+    { name: '', emoji: '🦊' }
+  ],
+  rounds: [],
+  showInput: false,
+  inputScores: [],
+  emojiPickerFor: -1,
+  celebration: null,
+};
+
+function loadState() {
+  try {
+    const s = JSON.parse(localStorage.getItem('rummy_state'));
+    if (s && s.screen) return s;
+  } catch(e) {}
+  return null;
+}
+
+function saveState() {
+  try { localStorage.setItem('rummy_state', JSON.stringify(state)); } catch(e) {}
+}
+
+function getTotals() {
+  return state.players.map((_, pi) =>
+    state.rounds.reduce((sum, r) => sum + (r[pi] || 0), 0)
+  );
+}
+
+function render() {
+  saveState();
+  const app = document.getElementById('app');
+  if (state.screen === 'setup') {
+    app.innerHTML = renderSetup();
+    bindSetup();
+  } else {
+    app.innerHTML = renderGame();
+    bindGame();
+  }
+}
+
+// ===== SETUP =====
+function renderSetup() {
+  return `
+    <div class="setup">
+      <div class="setup-title">🃏 Rummy Scorer</div>
+      <div class="setup-sub">Add players to start · Cutoff at ${CUTOFF} pts</div>
+
+      <div class="setup-section">
+        <div class="setup-label">Players (${state.players.length})</div>
+        <div class="player-inputs">
+          ${state.players.map((p, i) => `
+            <div class="player-row" style="animation-delay:${i*50}ms">
+              <button class="player-emoji-btn" data-emoji-idx="${i}">${p.emoji}</button>
+              <input class="player-name-input" placeholder="Player ${i+1} name" value="${p.name}" data-player-idx="${i}" maxlength="15">
+              ${state.players.length > 2 ? `<button class="remove-btn" data-remove="${i}">×</button>` : ''}
+            </div>
+          `).join('')}
+        </div>
+        ${state.players.length < 8 ? `<button class="add-player-btn" id="addPlayer">+ Add Player</button>` : ''}
+      </div>
+
+      <button class="start-btn" id="startGame" ${state.players.filter(p=>p.name.trim()).length < 2 ? 'disabled' : ''}>
+        Start Game →
+      </button>
+    </div>
+  `;
+}
+
+function bindSetup() {
+  document.querySelectorAll('[data-player-idx]').forEach(input => {
+    const i = parseInt(input.dataset.playerIdx);
+    input.oninput = () => { state.players[i].name = input.value; saveState(); checkStartBtn(); };
+  });
+
+  document.querySelectorAll('[data-emoji-idx]').forEach(btn => {
+    btn.onclick = () => { state.emojiPickerFor = parseInt(btn.dataset.emojiIdx); showEmojiPicker(); };
+  });
+
+  document.querySelectorAll('[data-remove]').forEach(btn => {
+    btn.onclick = () => { state.players.splice(parseInt(btn.dataset.remove), 1); render(); };
+  });
+
+  const addBtn = document.getElementById('addPlayer');
+  if (addBtn) addBtn.onclick = () => {
+    const usedEmojis = state.players.map(p => p.emoji);
+    const nextEmoji = EMOJI_LIST.find(e => !usedEmojis.includes(e)) || '🎲';
+    state.players.push({ name: '', emoji: nextEmoji });
+    render();
+    setTimeout(() => {
+      const inputs = document.querySelectorAll('.player-name-input');
+      inputs[inputs.length - 1]?.focus();
+    }, 50);
+  };
+
+  const startBtn = document.getElementById('startGame');
+  if (startBtn) startBtn.onclick = () => {
+    state.players = state.players.filter(p => p.name.trim());
+    if (state.players.length < 2) return;
+    state.screen = 'game';
+    state.rounds = [];
+    state.inputScores = state.players.map(() => '');
+    state.showInput = false;
+    render();
+  };
+}
+
+function checkStartBtn() {
+  const btn = document.getElementById('startGame');
+  if (btn) btn.disabled = state.players.filter(p => p.name.trim()).length < 2;
+}
+
+function showEmojiPicker() {
+  const overlay = document.createElement('div');
+  overlay.className = 'emoji-overlay';
+  overlay.innerHTML = `
+    <div class="emoji-picker">
+      <div class="emoji-picker-title">Pick an emoji</div>
+      <div class="emoji-grid">
+        ${EMOJI_LIST.map(e => `<button class="emoji-option" data-emoji="${e}">${e}</button>`).join('')}
+      </div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+  overlay.onclick = (ev) => {
+    if (ev.target === overlay) { overlay.remove(); return; }
+    if (ev.target.dataset.emoji) {
+      state.players[state.emojiPickerFor].emoji = ev.target.dataset.emoji;
+      overlay.remove();
+      render();
+    }
+  };
+}
+
+// ===== GAME =====
+function renderGame() {
+  const totals = getTotals();
+  const eliminated = totals.map(t => t > CUTOFF);
+  const activeCount = eliminated.filter(e => !e).length;
+  const gameOver = activeCount <= 1;
+
+  const sorted = state.players
+    .map((p, i) => ({ ...p, total: totals[i], elim: eliminated[i], idx: i }))
+    .sort((a, b) => {
+      if (a.elim && !b.elim) return 1;
+      if (!a.elim && b.elim) return -1;
+      return a.total - b.total;
+    });
+
+  const winnerIdx = gameOver ? sorted.find(p => !p.elim)?.idx : -1;
+  const winner = winnerIdx >= 0 ? state.players[winnerIdx] : null;
+
+  let html = `<div class="game">
+    <div class="header">
+      <div class="header-title">🃏 Rummy Night</div>
+      <div class="header-sub">Cutoff: ${CUTOFF} pts · ${state.rounds.length} rounds</div>
+    </div>`;
+
+  if (state.celebration) {
+    const cls = state.celebration.type === 'elim' ? 'banner-elim' : 'banner-round';
+    html += `<div class="banner ${cls}">${state.celebration.text}</div>`;
+  }
+
+  if (gameOver && winner) {
+    html += `<div class="banner-winner">
+      <div class="trophy">🏆</div>
+      <div class="name">${winner.emoji} ${winner.name} Wins!</div>
+      <div style="font-size:.82rem;opacity:.9;margin-top:4px">Game Over</div>
+    </div>`;
+  }
+
+  // Leaderboard
+  sorted.forEach((p, rank) => {
+    const barW = p.elim ? 100 : Math.min((p.total / CUTOFF) * 100, 100);
+    const isLeading = rank === 0 && !p.elim;
+    const barColor = p.elim ? 'rgba(239,68,68,.15)' : barW > 80 ? 'rgba(245,158,11,.15)' : 'rgba(59,130,246,.1)';
+    const cardClass = p.elim ? 'out' : isLeading ? 'leading' : '';
+    const scoreColor = p.elim ? 'var(--red)' : isLeading && state.rounds.length > 0 ? 'var(--green)' : 'var(--text)';
+    const hint = p.elim ? 'OUT' : state.rounds.length === 0 ? 'Ready' : `${CUTOFF - p.total} to cutoff`;
+
+    html += `<div class="lb-card ${cardClass}">
+      <div class="lb-bar" style="width:${barW}%;background:${barColor}"></div>
+      <div class="lb-inner">
+        <div class="lb-left">
+          <span class="lb-emoji">${p.emoji}</span>
+          <div>
+            <div class="lb-name ${p.elim?'struck':''}">${p.name}${p.elim?' 💀':''}${isLeading && state.rounds.length>0?' 👑':''}</div>
+            <div class="lb-hint">${hint}</div>
+          </div>
+        </div>
+        <div class="lb-score" style="color:${scoreColor}">${p.total}</div>
+      </div>
+    </div>`;
+  });
+
+  // Input area
+  if (!gameOver) {
+    if (!state.showInput) {
+      html += `<button class="add-round-btn" id="addRoundBtn">+ Add Round ${state.rounds.length + 1}</button>`;
+    } else {
+      html += `<div class="input-panel">
+        <div class="input-panel-title">Round ${state.rounds.length + 1}</div>`;
+
+      state.players.forEach((p, i) => {
+        if (eliminated[i]) return;
+        const val = state.inputScores[i];
+        html += `<div class="input-player">
+          <div class="input-player-header">
+            <span style="font-size:1.1rem">${p.emoji}</span>
+            <span class="input-player-name">${p.name}</span>
+            ${val !== '' ? `<span class="input-selected">${val}</span>` : ''}
+          </div>
+          <div class="quick-scores">
+            ${QUICK_SCORES.map(v => `
+              <button class="qs-btn ${val===String(v)?'active':''}" data-qs-player="${i}" data-qs-val="${v}">${v}</button>
+            `).join('')}
+          </div>
+          <input class="score-input" type="number" inputmode="numeric" placeholder="or type score..."
+            value="${val}" data-score-player="${i}">
+        </div>`;
+      });
+
+      html += `<div class="input-actions">
+        <button class="btn-cancel" id="cancelRound">Cancel</button>
+        <button class="btn-save" id="saveRound">Save Round ✓</button>
+      </div></div>`;
+    }
+  }
+
+  // History
+  if (state.rounds.length > 0) {
+    const cols = state.players.length;
+    const gridCols = `50px repeat(${cols}, 1fr)`;
+    html += `<div class="history">
+      <div class="history-title">Round History</div>
+      <div class="history-table">
+        <div class="history-header" style="grid-template-columns:${gridCols}">
+          <div>#</div>
+          ${state.players.map(p => `<div class="history-cell">${p.emoji}</div>`).join('')}
+        </div>`;
+
+    state.rounds.forEach((round, ri) => {
+      html += `<div class="history-row" style="grid-template-columns:${gridCols}">
+        <div class="history-cell round-num">${ri + 1}</div>
+        ${round.map((s) => {
+          const cls = s === 0 ? 'zero' : s >= 80 ? 'high' : '';
+          return `<div class="history-cell ${cls}">${s === 0 ? '🏆' : s}</div>`;
+        }).join('')}
+      </div>`;
+    });
+    html += `</div></div>`;
+  }
+
+  // Bottom actions
+  html += `<div class="bottom-actions">`;
+  if (state.rounds.length > 0) html += `<button class="btn-sm" id="undoBtn">↩ Undo</button>`;
+  html += `<button class="btn-sm danger" id="newGameBtn">🔄 New Game</button>`;
+  html += `</div></div>`;
+
+  return html;
+}
+
+function bindGame() {
+  const totals = getTotals();
+  const eliminated = totals.map(t => t > CUTOFF);
+
+  const addBtn = document.getElementById('addRoundBtn');
+  if (addBtn) addBtn.onclick = () => { state.showInput = true; state.inputScores = state.players.map(() => ''); render(); };
+
+  document.querySelectorAll('[data-qs-player]').forEach(btn => {
+    btn.onclick = () => {
+      state.inputScores[parseInt(btn.dataset.qsPlayer)] = btn.dataset.qsVal;
+      render();
+    };
+  });
+
+  document.querySelectorAll('[data-score-player]').forEach(input => {
+    input.oninput = () => {
+      state.inputScores[parseInt(input.dataset.scorePlayer)] = input.value;
+    };
+    input.onchange = () => {
+      state.inputScores[parseInt(input.dataset.scorePlayer)] = input.value;
+      render();
+    };
+  });
+
+  const cancelBtn = document.getElementById('cancelRound');
+  if (cancelBtn) cancelBtn.onclick = () => { state.showInput = false; render(); };
+
+  const saveBtn = document.getElementById('saveRound');
+  if (saveBtn) saveBtn.onclick = () => {
+    const currentTotals = getTotals();
+    const newScores = state.inputScores.map(s => parseInt(s) || 0);
+    state.rounds.push(newScores);
+    state.showInput = false;
+
+    const justElim = state.players.filter((_, i) => {
+      return currentTotals[i] + newScores[i] > CUTOFF && currentTotals[i] <= CUTOFF;
+    });
+    if (justElim.length > 0) {
+      state.celebration = { type: 'elim', text: `${justElim.map(p=>p.name).join(', ')} eliminated! 💀` };
+      setTimeout(() => { state.celebration = null; render(); }, 3000);
+    } else {
+      const zeros = state.players.filter((_, i) => newScores[i] === 0 && currentTotals[i] <= CUTOFF);
+      if (zeros.length > 0) {
+        state.celebration = { type: 'round', text: `${zeros.map(p=>p.name).join(', ')} won the round! 🎉` };
+        setTimeout(() => { state.celebration = null; render(); }, 2500);
+      }
+    }
+    render();
+  };
+
+  const undoBtn = document.getElementById('undoBtn');
+  if (undoBtn) undoBtn.onclick = () => { state.rounds.pop(); state.celebration = null; render(); };
+
+  const newBtn = document.getElementById('newGameBtn');
+  if (newBtn) newBtn.onclick = () => {
+    if (state.rounds.length > 0 && !confirm('Start a new game? Current scores will be lost.')) return;
+    state.screen = 'setup';
+    state.rounds = [];
+    state.showInput = false;
+    state.celebration = null;
+    render();
+  };
+}
+
+render();
+</script>
+</body>
+</html>
