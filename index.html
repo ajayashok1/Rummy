@@ -7,190 +7,161 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Rummy">
 <meta name="theme-color" content="#0f172a">
-<title>Rummy Scorer</title>
-<link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiUnVtbXkgU2NvcmVyIiwic2hvcnRfbmFtZSI6IlJ1bW15Iiwic3RhcnRfdXJsIjoiLiIsImRpc3BsYXkiOiJzdGFuZGFsb25lIiwiYmFja2dyb3VuZF9jb2xvciI6IiMwZjE3MmEiLCJ0aGVtZV9jb2xvciI6IiMwZjE3MmEifQ==">
+<title>Rummy Scorer v2</title>
+<!-- Rummy Scorer v2.0 | github.com/ajayashok1/Rummy -->
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=JetBrains+Mono:wght@600&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 :root{
-  --bg:#0f172a;--bg2:#1e293b;--card:rgba(255,255,255,0.06);
-  --border:rgba(255,255,255,0.08);--text:#e2e8f0;--muted:#64748b;--sub:#94a3b8;
-  --blue:#3b82f6;--blue-g:rgba(59,130,246,0.15);--green:#10b981;--green-g:rgba(16,185,129,0.12);
-  --red:#ef4444;--red-g:rgba(239,68,68,0.1);--amber:#f59e0b;--amber-g:rgba(245,158,11,0.15);
-  --gold:#fbbf24;
+  --bg:#0a3d1f;--bg2:#0d4f28;--bg3:#0f5e2f;
+  --card:rgba(255,255,255,0.07);--card2:rgba(255,255,255,0.11);
+  --border:rgba(255,200,80,0.18);--border2:rgba(255,200,80,0.35);
+  --text:#f5f0e0;--muted:#8aab8a;--sub:#a8c8a0;
+  --gold:#fbbf24;--gold2:#f59e0b;--gold-g:rgba(251,191,36,0.15);
+  --blue:#60a5fa;--blue-g:rgba(96,165,250,0.15);
+  --green:#34d399;--green-g:rgba(52,211,153,0.15);
+  --red:#f87171;--red-g:rgba(248,113,113,0.12);
+  --amber:#fbbf24;--purple:#a78bfa;--purple-g:rgba(167,139,250,0.15);
 }
 html,body{height:100%;overflow-x:hidden}
 body{
-  font-family:'Outfit',sans-serif;background:linear-gradient(160deg,var(--bg) 0%,var(--bg2) 50%,var(--bg) 100%);
+  font-family:'Outfit',sans-serif;
+  background:
+    radial-gradient(ellipse at 20% 20%, rgba(255,200,80,0.06) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 80%, rgba(255,200,80,0.04) 0%, transparent 50%),
+    repeating-linear-gradient(45deg, transparent, transparent 40px, rgba(255,255,255,0.008) 40px, rgba(255,255,255,0.008) 41px),
+    linear-gradient(160deg,#0a3d1f 0%,#0d4f28 40%,#0a3d1f 100%);
   color:var(--text);min-height:100vh;min-height:100dvh;
   padding:env(safe-area-inset-top) 16px env(safe-area-inset-bottom);
 }
 .container{max-width:480px;margin:0 auto;padding:12px 0 24px}
 
-/* ===== SETUP SCREEN ===== */
+/* AVATAR */
+.avatar{width:44px;height:44px;border-radius:50%;border:2px solid var(--border);background:var(--card);font-size:1.3rem;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden;position:relative}
+.avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.avatar:active{opacity:.8}
+.avatar-overlay{position:absolute;inset:0;background:rgba(0,0,0,.45);border-radius:50%;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s}
+.avatar:hover .avatar-overlay{opacity:1}
+.avatar-overlay span{font-size:.7rem;color:#fff;font-weight:700}
+
+/* SETUP */
 .setup{animation:fadeUp .4s ease}
-.setup-title{font-size:2.2rem;font-weight:900;text-align:center;margin:20px 0 4px;letter-spacing:-1px}
-.setup-sub{text-align:center;color:var(--sub);font-size:.85rem;margin-bottom:28px}
+.setup-title{font-size:2.2rem;font-weight:900;text-align:center;margin:20px 0 4px;letter-spacing:-1px;color:var(--gold);text-shadow:0 2px 12px rgba(251,191,36,0.3)}
+.setup-sub{text-align:center;color:var(--sub);font-size:.85rem;margin-bottom:20px}
+.tab-row{display:flex;gap:6px;margin-bottom:20px}
+.tab-btn{flex:1;padding:10px;border-radius:10px;border:1.5px solid var(--border);background:transparent;color:var(--sub);font-size:.85rem;font-weight:700;cursor:pointer}
+.tab-btn.active{border-color:var(--gold);background:var(--gold-g);color:var(--gold)}
 .setup-section{margin-bottom:22px}
-.setup-label{font-weight:700;font-size:.85rem;color:var(--sub);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px}
+.setup-label{font-weight:700;font-size:.85rem;color:var(--gold);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px}
 .player-inputs{display:flex;flex-direction:column;gap:8px}
 .player-row{display:flex;gap:8px;align-items:center;animation:fadeUp .3s ease backwards}
-.player-emoji-btn{
-  width:44px;height:44px;border-radius:10px;border:1.5px solid var(--border);
-  background:var(--card);font-size:1.3rem;cursor:pointer;display:flex;align-items:center;
-  justify-content:center;transition:all .15s;flex-shrink:0
-}
-.player-emoji-btn:active{transform:scale(.92)}
-.player-name-input{
-  flex:1;padding:11px 14px;border-radius:10px;border:1.5px solid var(--border);
-  background:rgba(0,0,0,.25);color:var(--text);font-family:'Outfit',sans-serif;
-  font-size:1rem;font-weight:600
-}
-.player-name-input:focus{outline:none;border-color:var(--blue)}
+.player-name-input{flex:1;padding:11px 14px;border-radius:10px;border:1.5px solid var(--border);background:rgba(0,0,0,.3);color:var(--text);font-family:'Outfit',sans-serif;font-size:1rem;font-weight:600}
+.player-name-input:focus{outline:none;border-color:var(--gold)}
 .player-name-input::placeholder{color:var(--muted);font-weight:400}
-.remove-btn{
-  width:36px;height:36px;border-radius:8px;border:none;
-  background:var(--red-g);color:var(--red);font-size:1.1rem;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;flex-shrink:0
-}
-.add-player-btn{
-  width:100%;padding:12px;border-radius:10px;border:2px dashed rgba(59,130,246,.4);
-  background:rgba(59,130,246,.06);color:#60a5fa;font-size:.95rem;font-weight:700;
-  cursor:pointer;margin-top:4px;transition:all .15s
-}
-.add-player-btn:active{transform:scale(.98)}
-.start-btn{
-  width:100%;padding:16px;border-radius:14px;border:none;
-  background:linear-gradient(135deg,#3b82f6,#1d4ed8);color:#fff;
-  font-size:1.1rem;font-weight:800;cursor:pointer;margin-top:24px;
-  box-shadow:0 4px 24px rgba(59,130,246,.35);transition:all .15s;letter-spacing:.3px
-}
-.start-btn:active{transform:scale(.97)}
+.remove-btn{width:36px;height:36px;border-radius:8px;border:none;background:var(--red-g);color:var(--red);font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.add-player-btn{width:100%;padding:12px;border-radius:10px;border:2px dashed rgba(251,191,36,.4);background:rgba(251,191,36,.06);color:var(--gold);font-size:.95rem;font-weight:700;cursor:pointer;margin-top:4px}
+.start-btn{width:100%;padding:16px;border-radius:14px;border:none;background:linear-gradient(135deg,#b7791f,#f59e0b,#b7791f);color:#1a0a00;font-size:1.1rem;font-weight:800;cursor:pointer;margin-top:24px;box-shadow:0 4px 24px rgba(251,191,36,.4);letter-spacing:.3px}
 .start-btn:disabled{opacity:.4;pointer-events:none}
+.save-team-row{display:flex;gap:8px;margin-top:10px}
+.save-team-input{flex:1;padding:10px 12px;border-radius:10px;border:1.5px solid var(--border);background:rgba(0,0,0,.3);color:var(--text);font-family:'Outfit',sans-serif;font-size:.9rem}
+.save-team-input:focus{outline:none;border-color:var(--gold)}
+.save-team-btn{padding:10px 16px;border-radius:10px;border:none;background:var(--purple-g);color:var(--purple);font-weight:700;font-size:.85rem;cursor:pointer;white-space:nowrap}
+.err-msg{color:var(--red);font-size:.8rem;margin-top:6px;min-height:18px}
 
-/* ===== EMOJI PICKER ===== */
-.emoji-overlay{
-  position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:100;
-  display:flex;align-items:flex-end;justify-content:center;animation:fadeIn .2s
-}
-.emoji-picker{
-  background:var(--bg2);border-radius:20px 20px 0 0;padding:20px 16px 32px;
-  width:100%;max-width:480px;max-height:60vh;overflow-y:auto;animation:slideUp .3s ease
-}
-.emoji-picker-title{font-weight:700;font-size:.9rem;color:var(--sub);margin-bottom:12px;text-align:center}
-.emoji-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:6px}
-.emoji-option{
-  aspect-ratio:1;border-radius:10px;border:none;background:var(--card);
-  font-size:1.4rem;cursor:pointer;display:flex;align-items:center;justify-content:center;
-  transition:all .1s
-}
+/* SAVED TEAMS */
+.saved-team-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:8px}
+.saved-team-card.editing{border-color:rgba(139,92,246,.4);background:var(--purple-g)}
+.st-header{display:flex;align-items:center;justify-content:space-between}
+.saved-team-name{font-weight:700;font-size:.95rem}
+.saved-team-players{font-size:.78rem;color:var(--sub);margin-top:2px;display:flex;align-items:center;gap:4px;flex-wrap:wrap}
+.st-mini-avatar{width:20px;height:20px;border-radius:50%;object-fit:cover;border:1px solid var(--border)}
+.st-btns{display:flex;gap:5px;flex-shrink:0}
+.tbn{padding:5px 10px;border-radius:7px;border:none;font-size:.75rem;font-weight:700;cursor:pointer}
+.tbn-play{background:var(--blue-g);color:#93c5fd}
+.tbn-edit{background:var(--purple-g);color:#c4b5fd}
+.tbn-del{background:var(--red-g);color:#f87171}
+.tbn-save{background:var(--green-g);color:#6ee7b7}
+.tbn-cancel{background:var(--card);color:var(--sub)}
+.edit-section{margin-top:12px;padding-top:12px;border-top:1px solid var(--border)}
+.edit-name-row{display:flex;gap:8px;margin-bottom:10px}
+.edit-name-input{flex:1;padding:8px 12px;border-radius:8px;border:1.5px solid var(--border);background:rgba(0,0,0,.3);color:var(--text);font-family:'Outfit',sans-serif;font-size:.9rem;font-weight:600}
+.edit-name-input:focus{outline:none;border-color:var(--purple)}
+.no-teams{text-align:center;color:var(--muted);font-size:.85rem;padding:20px 0}
+
+/* AVATAR PICKER */
+.avatar-picker-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:100;display:flex;align-items:flex-end;justify-content:center;animation:fadeIn .2s}
+.avatar-picker{background:var(--bg2);border-radius:20px 20px 0 0;padding:20px 16px 32px;width:100%;max-width:480px;animation:slideUp .3s ease}
+.avatar-picker-title{font-weight:700;font-size:.9rem;color:var(--sub);margin-bottom:16px;text-align:center}
+.avatar-picker-options{display:flex;flex-direction:column;gap:10px}
+.avatar-picker-btn{width:100%;padding:14px;border-radius:12px;border:1.5px solid var(--border);background:var(--card);color:var(--text);font-size:.95rem;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:12px}
+.avatar-picker-btn:active{transform:scale(.98);background:var(--blue-g)}
+.avatar-picker-btn span{font-size:1.4rem}
+.emoji-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:6px;margin-top:12px;max-height:200px;overflow-y:auto}
+.emoji-option{aspect-ratio:1;border-radius:10px;border:none;background:var(--card);font-size:1.4rem;cursor:pointer;display:flex;align-items:center;justify-content:center}
 .emoji-option:active{transform:scale(.85);background:var(--blue-g)}
+.picker-section-title{font-size:.8rem;color:var(--sub);font-weight:700;margin-top:14px;margin-bottom:6px}
 
-/* ===== GAME SCREEN ===== */
+/* GAME */
 .game{animation:fadeUp .4s ease}
 .header{text-align:center;padding:8px 0 14px}
-.header-title{font-size:1.6rem;font-weight:900;letter-spacing:-.5px}
+.header-title{font-size:1.6rem;font-weight:900;letter-spacing:-.5px;color:var(--gold)}
 .header-sub{font-size:.8rem;color:var(--sub);margin-top:2px}
-
-.banner{
-  border-radius:12px;padding:12px;text-align:center;font-weight:700;
-  font-size:1rem;margin-bottom:12px;animation:popIn .4s ease
-}
-.banner-elim{background:linear-gradient(135deg,var(--amber),var(--red))}
-.banner-round{background:linear-gradient(135deg,#059669,var(--green))}
-.banner-winner{
-  background:linear-gradient(135deg,#059669,var(--green));
-  border-radius:16px;padding:20px;margin-bottom:16px
-}
+.banner{border-radius:12px;padding:12px;text-align:center;font-weight:700;font-size:1rem;margin-bottom:12px;animation:popIn .4s ease}
+.banner-elim{background:linear-gradient(135deg,#92400e,#dc2626);color:#fef2f2}
+.banner-round{background:linear-gradient(135deg,#065f46,#059669);color:#ecfdf5}
+.banner-winner{background:linear-gradient(135deg,#78350f,#b7791f,#78350f);border:2px solid var(--gold);border-radius:16px;padding:20px;margin-bottom:16px}
 .banner-winner .trophy{font-size:2.2rem}
-.banner-winner .name{font-size:1.3rem;font-weight:900;margin-top:4px}
-
-/* Leaderboard */
-.lb-card{
-  border-radius:12px;padding:12px 14px;margin-bottom:8px;position:relative;
-  overflow:hidden;border:1px solid var(--border);background:var(--card);transition:all .3s
-}
-.lb-card.leading{border-color:rgba(16,185,129,.3);background:var(--green-g)}
-.lb-card.out{border-color:rgba(239,68,68,.3);background:var(--red-g);opacity:.5}
+.banner-winner .name{font-size:1.3rem;font-weight:900;margin-top:4px;color:var(--gold)}
+.lb-card{border-radius:12px;padding:12px 14px;margin-bottom:8px;position:relative;overflow:hidden;border:1px solid var(--border);background:var(--card)}
+.lb-card.leading{border-color:rgba(251,191,36,.5);background:rgba(251,191,36,.08)}
+.lb-card.out{border-color:rgba(248,113,113,.3);background:var(--red-g);opacity:.6}
+.lb-card.rejoined{border-color:rgba(167,139,250,.3);background:var(--purple-g)}
 .lb-bar{position:absolute;left:0;top:0;bottom:0;transition:width .5s ease}
 .lb-inner{display:flex;align-items:center;justify-content:space-between;position:relative}
 .lb-left{display:flex;align-items:center;gap:10px}
-.lb-emoji{font-size:1.3rem}
+.lb-avatar{width:36px;height:36px;border-radius:50%;border:2px solid var(--border2);background:var(--card);font-size:1.2rem;display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0}
+.lb-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%}
 .lb-name{font-weight:700;font-size:.95rem}
 .lb-name.struck{text-decoration:line-through}
 .lb-hint{font-size:.7rem;color:var(--sub)}
 .lb-score{font-size:1.3rem;font-weight:800;font-family:'JetBrains Mono',monospace}
-
-/* Score Input */
-.add-round-btn{
-  width:100%;padding:14px;border-radius:12px;border:2px dashed rgba(59,130,246,.5);
-  background:rgba(59,130,246,.08);color:#60a5fa;font-size:1rem;font-weight:700;cursor:pointer
-}
-.input-panel{
-  background:rgba(255,255,255,.07);border-radius:16px;padding:16px;
-  border:1px solid rgba(255,255,255,.1);animation:fadeUp .25s ease
-}
-.input-panel-title{font-weight:700;font-size:.95rem;margin-bottom:14px}
+.lb-actions{display:flex;gap:5px;margin-top:8px;position:relative}
+.lb-mini-btn{padding:5px 10px;border-radius:7px;border:none;font-size:.72rem;font-weight:700;cursor:pointer}
+.btn-rejoin{background:var(--purple-g);color:var(--purple);border:1px solid rgba(167,139,250,.3)}
+.add-round-btn{width:100%;padding:14px;border-radius:12px;border:2px dashed rgba(251,191,36,.4);background:rgba(251,191,36,.06);color:var(--gold);font-size:1rem;font-weight:700;cursor:pointer;margin-bottom:8px}
+.input-panel{background:rgba(0,0,0,.25);border-radius:16px;padding:16px;border:1px solid var(--border);animation:fadeUp .25s ease;margin-bottom:8px}
+.input-panel-title{font-weight:700;font-size:.95rem;margin-bottom:14px;color:var(--gold)}
 .input-player{margin-bottom:16px}
 .input-player-header{display:flex;align-items:center;gap:8px;margin-bottom:6px}
 .input-player-name{font-weight:600;font-size:.9rem}
-.input-selected{
-  margin-left:auto;background:var(--blue-g);border:1px solid rgba(59,130,246,.4);
-  padding:2px 10px;border-radius:6px;font-size:.85rem;font-weight:700;
-  color:#93c5fd;font-family:'JetBrains Mono',monospace
-}
+.input-selected{margin-left:auto;background:var(--gold-g);border:1px solid rgba(251,191,36,.4);padding:2px 10px;border-radius:6px;font-size:.85rem;font-weight:700;color:var(--gold);font-family:'JetBrains Mono',monospace}
 .quick-scores{display:flex;gap:5px;flex-wrap:wrap}
-.qs-btn{
-  padding:8px 10px;border-radius:8px;border:1.5px solid rgba(255,255,255,.12);
-  background:rgba(255,255,255,.04);color:var(--sub);font-size:.82rem;font-weight:600;
-  cursor:pointer;min-width:36px;font-family:'JetBrains Mono',monospace;transition:all .1s
-}
-.qs-btn.active{border-color:#60a5fa;background:var(--blue-g);color:#93c5fd}
+.qs-btn{padding:8px 10px;border-radius:8px;border:1.5px solid var(--border);background:rgba(0,0,0,.2);color:var(--sub);font-size:.82rem;font-weight:600;cursor:pointer;min-width:36px;font-family:'JetBrains Mono',monospace}
+.qs-btn.active{border-color:var(--gold);background:var(--gold-g);color:var(--gold)}
 .qs-btn:active{transform:scale(.92)}
-.score-input{
-  width:100%;margin-top:6px;padding:8px 12px;border-radius:8px;
-  border:1px solid rgba(255,255,255,.1);background:rgba(0,0,0,.25);
-  color:var(--text);font-size:.95rem;font-weight:600;text-align:center;
-  font-family:'JetBrains Mono',monospace
-}
-.score-input:focus{outline:none;border-color:var(--blue)}
+.score-input{width:100%;margin-top:6px;padding:8px 12px;border-radius:8px;border:1px solid var(--border);background:rgba(0,0,0,.3);color:var(--text);font-size:.95rem;font-weight:600;text-align:center;font-family:'JetBrains Mono',monospace}
+.score-input:focus{outline:none;border-color:var(--gold)}
 .input-actions{display:flex;gap:8px;margin-top:14px}
-.btn-cancel{
-  flex:1;padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,.12);
-  background:transparent;color:var(--sub);font-size:.9rem;font-weight:600;cursor:pointer
-}
-.btn-save{
-  flex:2;padding:12px;border-radius:10px;border:none;
-  background:linear-gradient(135deg,#3b82f6,#2563eb);color:#fff;
-  font-size:.9rem;font-weight:700;cursor:pointer
-}
-.btn-save:active,.btn-cancel:active{transform:scale(.97)}
-
-/* History */
+.btn-cancel{flex:1;padding:12px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--sub);font-size:.9rem;font-weight:600;cursor:pointer}
+.btn-save{flex:2;padding:12px;border-radius:10px;border:none;background:linear-gradient(135deg,#b7791f,#f59e0b);color:#1a0a00;font-size:.9rem;font-weight:700;cursor:pointer}
+.add-mid-panel{background:rgba(0,0,0,.25);border-radius:16px;padding:16px;border:1px solid rgba(251,191,36,.2);animation:fadeUp .25s ease;margin-bottom:8px}
 .history{margin-top:20px}
-.history-title{font-weight:700;font-size:.85rem;color:var(--sub);margin-bottom:8px}
-.history-table{
-  background:rgba(255,255,255,.03);border-radius:12px;overflow:hidden;
-  border:1px solid var(--border)
-}
+.history-title{font-weight:700;font-size:.85rem;color:var(--gold);margin-bottom:8px}
+.history-table{background:rgba(0,0,0,.2);border-radius:12px;overflow:hidden;border:1px solid var(--border)}
 .history-header,.history-row{display:grid;padding:7px 10px;font-size:.78rem}
-.history-header{background:rgba(255,255,255,.05);font-weight:700;color:var(--muted)}
-.history-row{border-top:1px solid rgba(255,255,255,.04)}
+.history-header{background:rgba(0,0,0,.3);font-weight:700;color:var(--gold)}
+.history-row{border-top:1px solid rgba(255,200,80,0.08)}
 .history-cell{text-align:center}
-.history-cell.zero{color:var(--green);font-weight:800}
+.history-cell.zero{color:var(--gold);font-weight:800}
 .history-cell.high{color:var(--red)}
 .history-cell.round-num{color:var(--muted);font-weight:600;text-align:left}
-
-/* Bottom */
+.history-cell.na{color:var(--muted)}
+.h-avatar{width:20px;height:20px;border-radius:50%;object-fit:cover;vertical-align:middle}
 .bottom-actions{display:flex;gap:8px;margin-top:16px;padding-bottom:20px}
-.btn-sm{
-  flex:1;padding:10px;border-radius:10px;font-size:.82rem;cursor:pointer;
-  border:1px solid rgba(255,255,255,.1);background:transparent;color:var(--sub)
-}
-.btn-sm.danger{border-color:rgba(239,68,68,.3);background:var(--red-g);color:#f87171}
+.btn-sm{flex:1;padding:10px;border-radius:10px;font-size:.82rem;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--sub)}
+.btn-sm.danger{border-color:rgba(248,113,113,.3);background:var(--red-g);color:var(--red)}
 .btn-sm:active{transform:scale(.97)}
 
-/* Animations */
 @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
@@ -199,341 +170,491 @@ body{
 </head>
 <body>
 <div class="container" id="app"></div>
+<input type="file" id="photoInput" accept="image/*" style="display:none">
 
 <script>
-const CUTOFF = 220;
-const EMOJI_LIST = [
-  '🦁','🦊','🐯','🐼','🦋','🐺','🦅','🐬','🦈','🐙','🦄','🐲',
-  '🔥','⚡','💎','🌟','👑','🎯','🎲','🃏','♠️','♣️','♥️','♦️',
-  '🍀','🌶️','🍕','🎸','🚀','🏆','⭐','🌊','🎭','🎪','🧊','💫'
-];
-const QUICK_SCORES = [0, 10, 20, 25, 30, 40, 50, 80, 100];
+const CUTOFF=220;
+const EMOJI_LIST=['🦁','🦊','🐯','🐼','🦋','🐺','🦅','🐬','🦈','🐙','🦄','🐲','🔥','⚡','💎','🌟','👑','🎯','🎲','🃏','♠️','♣️','♥️','♦️','🍀','🌶️','🍕','🎸','🚀','🏆','⭐','🌊','🎭','🎪','🧊','💫'];
+const QUICK_SCORES=[0,10,20,25,30,40,50,80,100];
 
-let state = loadState() || {
-  screen: 'setup',
-  players: [
-    { name: '', emoji: '🦁' },
-    { name: '', emoji: '🦊' }
-  ],
-  rounds: [],
-  showInput: false,
-  inputScores: [],
-  emojiPickerFor: -1,
-  celebration: null,
+function loadTeams(){try{return JSON.parse(localStorage.getItem('rummy_teams'))||[];}catch(e){return[];}}
+function saveTeams(t){try{localStorage.setItem('rummy_teams',JSON.stringify(t));}catch(e){}}
+function loadState(){try{const s=JSON.parse(localStorage.getItem('rummy_state_v4'));if(s&&s.screen)return s;}catch(e){}return null;}
+function saveState(){try{localStorage.setItem('rummy_state_v4',JSON.stringify(state));}catch(e){}}
+
+let state=loadState()||{
+  screen:'setup',setupTab:'new',confirmDeleteIdx:-1,
+  players:[{name:'',emoji:'🦁',photo:null},{name:'',emoji:'🦊',photo:null}],
+  rounds:[],showInput:false,inputScores:[],
+  emojiCtx:null,celebration:null,
+  showAddMid:false,midPlayer:{name:'',emoji:'🎲',photo:null},
+  savedTeams:loadTeams(),
+  teamNameInput:'',teamNameErr:'',
+  editingTeamIdx:-1,editTeam:null
 };
 
-function loadState() {
-  try {
-    const s = JSON.parse(localStorage.getItem('rummy_state'));
-    if (s && s.screen) return s;
-  } catch(e) {}
-  return null;
-}
-
-function saveState() {
-  try { localStorage.setItem('rummy_state', JSON.stringify(state)); } catch(e) {}
-}
-
-function getTotals() {
-  return state.players.map((_, pi) =>
-    state.rounds.reduce((sum, r) => sum + (r[pi] || 0), 0)
-  );
-}
-
-function render() {
-  saveState();
-  const app = document.getElementById('app');
-  if (state.screen === 'setup') {
-    app.innerHTML = renderSetup();
-    bindSetup();
-  } else {
-    app.innerHTML = renderGame();
-    bindGame();
+// Avatar helpers
+function avatarHTML(p,size=44,cls='avatar'){
+  if(p.photo){
+    return `<div class="${cls}" style="width:${size}px;height:${size}px"><img src="${p.photo}" alt="${p.name}"><div class="avatar-overlay"><span>📷</span></div></div>`;
   }
+  return `<div class="${cls}" style="width:${size}px;height:${size}px;font-size:${size*.55}px">${p.emoji||'🎲'}<div class="avatar-overlay"><span>📷</span></div></div>`;
 }
 
-// ===== SETUP =====
-function renderSetup() {
-  return `
-    <div class="setup">
-      <div class="setup-title">🃏 Rummy Scorer</div>
-      <div class="setup-sub">Add players to start · Cutoff at ${CUTOFF} pts</div>
+function getTotals(){
+  return state.players.map((p,pi)=>{
+    if(!p.joinedRound) return state.rounds.reduce((s,r)=>s+(r[pi]!=null?r[pi]:0),0);
+    return state.rounds.slice(p.joinedRound).reduce((s,r)=>s+(r[pi]!=null?r[pi]:0),p.startScore||0);
+  });
+}
+function getActiveMax(totals,eliminated){
+  const active=totals.filter((_,i)=>!eliminated[i]);
+  return active.length?Math.max(...active):0;
+}
 
-      <div class="setup-section">
-        <div class="setup-label">Players (${state.players.length})</div>
-        <div class="player-inputs">
-          ${state.players.map((p, i) => `
-            <div class="player-row" style="animation-delay:${i*50}ms">
-              <button class="player-emoji-btn" data-emoji-idx="${i}">${p.emoji}</button>
-              <input class="player-name-input" placeholder="Player ${i+1} name" value="${p.name}" data-player-idx="${i}" maxlength="15">
-              ${state.players.length > 2 ? `<button class="remove-btn" data-remove="${i}">×</button>` : ''}
-            </div>
-          `).join('')}
-        </div>
-        ${state.players.length < 8 ? `<button class="add-player-btn" id="addPlayer">+ Add Player</button>` : ''}
-      </div>
+// Photo upload handler
+let _photoCallback=null;
+document.getElementById('photoInput').onchange=function(){
+  const file=this.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{if(_photoCallback)_photoCallback(e.target.result);this.value='';};
+  reader.readAsDataURL(file);
+};
 
-      <button class="start-btn" id="startGame" ${state.players.filter(p=>p.name.trim()).length < 2 ? 'disabled' : ''}>
-        Start Game →
-      </button>
+function showAvatarPicker(ctx){
+  state.emojiCtx=ctx;
+  const overlay=document.createElement('div');
+  overlay.className='avatar-picker-overlay';
+  overlay.innerHTML=`<div class="avatar-picker">
+    <div class="avatar-picker-title">Choose Avatar</div>
+    <div class="avatar-picker-options">
+      <button class="avatar-picker-btn" id="apUpload"><span>📷</span> Upload Photo</button>
     </div>
-  `;
-}
-
-function bindSetup() {
-  document.querySelectorAll('[data-player-idx]').forEach(input => {
-    const i = parseInt(input.dataset.playerIdx);
-    input.oninput = () => { state.players[i].name = input.value; saveState(); checkStartBtn(); };
-  });
-
-  document.querySelectorAll('[data-emoji-idx]').forEach(btn => {
-    btn.onclick = () => { state.emojiPickerFor = parseInt(btn.dataset.emojiIdx); showEmojiPicker(); };
-  });
-
-  document.querySelectorAll('[data-remove]').forEach(btn => {
-    btn.onclick = () => { state.players.splice(parseInt(btn.dataset.remove), 1); render(); };
-  });
-
-  const addBtn = document.getElementById('addPlayer');
-  if (addBtn) addBtn.onclick = () => {
-    const usedEmojis = state.players.map(p => p.emoji);
-    const nextEmoji = EMOJI_LIST.find(e => !usedEmojis.includes(e)) || '🎲';
-    state.players.push({ name: '', emoji: nextEmoji });
-    render();
-    setTimeout(() => {
-      const inputs = document.querySelectorAll('.player-name-input');
-      inputs[inputs.length - 1]?.focus();
-    }, 50);
-  };
-
-  const startBtn = document.getElementById('startGame');
-  if (startBtn) startBtn.onclick = () => {
-    state.players = state.players.filter(p => p.name.trim());
-    if (state.players.length < 2) return;
-    state.screen = 'game';
-    state.rounds = [];
-    state.inputScores = state.players.map(() => '');
-    state.showInput = false;
-    render();
-  };
-}
-
-function checkStartBtn() {
-  const btn = document.getElementById('startGame');
-  if (btn) btn.disabled = state.players.filter(p => p.name.trim()).length < 2;
-}
-
-function showEmojiPicker() {
-  const overlay = document.createElement('div');
-  overlay.className = 'emoji-overlay';
-  overlay.innerHTML = `
-    <div class="emoji-picker">
-      <div class="emoji-picker-title">Pick an emoji</div>
-      <div class="emoji-grid">
-        ${EMOJI_LIST.map(e => `<button class="emoji-option" data-emoji="${e}">${e}</button>`).join('')}
-      </div>
-    </div>
-  `;
+    <div class="picker-section-title">OR CHOOSE EMOJI</div>
+    <div class="emoji-grid">${EMOJI_LIST.map(e=>`<button class="emoji-option" data-emoji="${e}">${e}</button>`).join('')}</div>
+  </div>`;
   document.body.appendChild(overlay);
-  overlay.onclick = (ev) => {
-    if (ev.target === overlay) { overlay.remove(); return; }
-    if (ev.target.dataset.emoji) {
-      state.players[state.emojiPickerFor].emoji = ev.target.dataset.emoji;
-      overlay.remove();
+
+  overlay.querySelector('#apUpload').onclick=()=>{
+    overlay.remove();
+    _photoCallback=(dataUrl)=>{
+      setAvatarByCtx(ctx,null,dataUrl);
       render();
+    };
+    document.getElementById('photoInput').click();
+  };
+
+  overlay.querySelectorAll('.emoji-option').forEach(btn=>{
+    btn.onclick=()=>{
+      setAvatarByCtx(ctx,btn.dataset.emoji,null);
+      overlay.remove();render();
+    };
+  });
+
+  overlay.onclick=(ev)=>{if(ev.target===overlay)overlay.remove();};
+}
+
+function setAvatarByCtx(ctx,emoji,photo){
+  const setP=(p)=>{if(emoji){p.emoji=emoji;p.photo=null;}else if(photo){p.photo=photo;}};
+  if(ctx==='mid'){setP(state.midPlayer);}
+  else if(ctx.startsWith('new-')){setP(state.players[parseInt(ctx.split('-')[1])]);}
+  else if(ctx.startsWith('edit-')){if(state.editTeam)setP(state.editTeam.players[parseInt(ctx.split('-')[1])]);}
+}
+
+function render(){saveState();const app=document.getElementById('app');if(state.screen==='setup'){app.innerHTML=renderSetup();bindSetup();}else{app.innerHTML=renderGame();bindGame();}}
+
+/* ===== SETUP ===== */
+function renderSetup(){
+  const teams=state.savedTeams||[];
+  const ei=state.editingTeamIdx;
+  const et=state.editTeam;
+
+  return `<div class="setup">
+    <div class="setup-title">🃏 Rummy Scorer</div>
+    <div class="setup-sub">v2.0 · Cutoff at ${CUTOFF} pts · Tap avatar to change</div>
+    <div class="tab-row">
+      <button class="tab-btn ${state.setupTab==='new'?'active':''}" data-tab="new">New Game</button>
+      <button class="tab-btn ${state.setupTab==='teams'?'active':''}" data-tab="teams">Saved Teams ${teams.length>0?`(${teams.length})`:''}</button>
+    </div>
+
+    ${state.setupTab==='new'?`
+    <div class="setup-section">
+      <div class="setup-label">Players (${state.players.length})</div>
+      <div class="player-inputs">
+        ${state.players.map((p,i)=>`
+          <div class="player-row" style="animation-delay:${i*50}ms">
+            <div data-avatar-ctx="new-${i}">${avatarHTML(p,44,'avatar')}</div>
+            <input class="player-name-input" placeholder="Player ${i+1} name" value="${p.name}" data-player-idx="${i}" maxlength="15">
+            ${state.players.length>2?`<button class="remove-btn" data-remove="${i}">×</button>`:''}
+          </div>`).join('')}
+      </div>
+      ${state.players.length<8?`<button class="add-player-btn" id="addPlayer">+ Add Player</button>`:''}
+    </div>
+    <div class="setup-section">
+      <div class="setup-label">Save as Team</div>
+      <div class="save-team-row">
+        <input class="save-team-input" id="teamNameInput" placeholder="Team name (e.g. Family)" value="${state.teamNameInput||''}">
+        <button class="save-team-btn" id="saveTeamBtn">💾 Save Team</button>
+      </div>
+      <div class="err-msg">${state.teamNameErr||''}</div>
+    </div>
+    `:`
+    <div class="setup-section">
+      <div class="setup-label">Saved Teams</div>
+      ${teams.length===0?`<div class="no-teams">No saved teams yet.<br>Create players in New Game tab and save.</div>`:''}
+      ${teams.map((t,ti)=>`
+        <div class="saved-team-card ${ei===ti?'editing':''}">
+          <div class="st-header">
+            <div style="flex:1;min-width:0">
+              <div class="saved-team-name">${ei===ti?'<em>Editing...</em>':t.name}</div>
+              <div class="saved-team-players">
+                ${t.players.map(p=>p.photo
+                  ?`<img class="st-mini-avatar" src="${p.photo}" alt="${p.name}"> ${p.name}`
+                  :`${p.emoji} ${p.name}`
+                ).join(' · ')}
+              </div>
+            </div>
+            <div class="st-btns">
+              ${ei===ti?`
+                <button class="tbn tbn-save" data-save-edit="${ti}">✓ Save</button>
+                <button class="tbn tbn-cancel" data-cancel-edit="${ti}">✕</button>
+              `:state.confirmDeleteIdx===ti?`
+                <span style="font-size:.72rem;color:#f87171;font-weight:700">Delete?</span>
+                <button class="tbn tbn-del" data-del-team="${ti}">✓ Yes</button>
+                <button class="tbn tbn-cancel" data-cancel-del>✕</button>
+              `:`
+                <button class="tbn tbn-play" data-load-team="${ti}">▶ Play</button>
+                <button class="tbn tbn-edit" data-edit-team="${ti}">✏️</button>
+                <button class="tbn tbn-del" data-del-team="${ti}">🗑</button>
+              `}
+            </div>
+          </div>
+          ${ei===ti&&et?`
+          <div class="edit-section">
+            <div class="setup-label" style="margin-bottom:8px">Team Name</div>
+            <input class="edit-name-input" id="editTeamName" value="${et.name}" maxlength="20" placeholder="Team name" style="width:100%;margin-bottom:12px">
+            <div class="setup-label" style="margin-bottom:8px">Members</div>
+            <div class="player-inputs">
+              ${et.players.map((p,pi)=>`
+                <div class="player-row">
+                  <div data-avatar-ctx="edit-${pi}">${avatarHTML(p,44,'avatar')}</div>
+                  <input class="player-name-input" value="${p.name}" data-edit-player="${pi}" maxlength="15">
+                  ${et.players.length>2?`<button class="remove-btn" data-remove-edit="${pi}">×</button>`:''}
+                </div>`).join('')}
+            </div>
+            ${et.players.length<8?`<button class="add-player-btn" id="addEditPlayer" style="margin-top:8px">+ Add Member</button>`:''}
+            <div class="err-msg" id="editErr"></div>
+          </div>`:''}
+        </div>`).join('')}
+    </div>`}
+
+    <button class="start-btn" id="startGame" ${state.players.filter(p=>p.name.trim()).length<2?'disabled':''}>
+      Start Game →
+    </button>
+  </div>`;
+}
+
+function bindSetup(){
+  document.querySelectorAll('[data-tab]').forEach(btn=>{btn.onclick=()=>{state.setupTab=btn.dataset.tab;state.teamNameErr='';render();};});
+
+  // Avatar clicks
+  document.querySelectorAll('[data-avatar-ctx]').forEach(el=>{
+    el.onclick=()=>showAvatarPicker(el.dataset.avatarCtx);
+  });
+
+  document.querySelectorAll('[data-player-idx]').forEach(input=>{
+    input.oninput=()=>{state.players[parseInt(input.dataset.playerIdx)].name=input.value;saveState();checkStartBtn();};
+  });
+  document.querySelectorAll('[data-remove]').forEach(btn=>{btn.onclick=()=>{state.players.splice(parseInt(btn.dataset.remove),1);render();};});
+  const addBtn=document.getElementById('addPlayer');
+  if(addBtn)addBtn.onclick=()=>{
+    const used=state.players.map(p=>p.emoji);
+    state.players.push({name:'',emoji:EMOJI_LIST.find(e=>!used.includes(e))||'🎲',photo:null});
+    render();setTimeout(()=>{const ins=document.querySelectorAll('.player-name-input');ins[ins.length-1]?.focus();},50);
+  };
+
+  const tnInput=document.getElementById('teamNameInput');
+  if(tnInput)tnInput.oninput=()=>{state.teamNameInput=tnInput.value;state.teamNameErr='';};
+  const saveTeamBtn=document.getElementById('saveTeamBtn');
+  if(saveTeamBtn)saveTeamBtn.onclick=()=>{
+    const name=(state.teamNameInput||'').trim();
+    const valid=state.players.filter(p=>p.name.trim());
+    if(!name){state.teamNameErr='Please enter a team name.';render();return;}
+    if(valid.length<2){state.teamNameErr='Need at least 2 players.';render();return;}
+    const teams=state.savedTeams||[];
+    if(teams.some(t=>t.name.toLowerCase()===name.toLowerCase())){state.teamNameErr=`"${name}" already exists.`;render();return;}
+    teams.push({name,players:valid.map(p=>({name:p.name.trim(),emoji:p.emoji,photo:p.photo||null}))});
+    state.savedTeams=teams;saveTeams(teams);state.teamNameInput='';state.teamNameErr='';render();
+  };
+
+  document.querySelectorAll('[data-load-team]').forEach(el=>{
+    el.onclick=()=>{const t=state.savedTeams[parseInt(el.dataset.loadTeam)];state.players=t.players.map(p=>({...p}));state.setupTab='new';state.editingTeamIdx=-1;state.editTeam=null;render();};
+  });
+  document.querySelectorAll('[data-del-team]').forEach(btn=>{
+    btn.onclick=()=>{
+      const ti=parseInt(btn.dataset.delTeam);
+      if(state.confirmDeleteIdx===ti){
+        state.savedTeams.splice(ti,1);saveTeams(state.savedTeams);
+        if(state.editingTeamIdx===ti){state.editingTeamIdx=-1;state.editTeam=null;}
+        state.confirmDeleteIdx=-1;render();
+      }else{state.confirmDeleteIdx=ti;render();}
+    };
+  });
+  document.querySelectorAll('[data-cancel-del]').forEach(btn=>{btn.onclick=()=>{state.confirmDeleteIdx=-1;render();};});
+  document.querySelectorAll('[data-edit-team]').forEach(btn=>{
+    btn.onclick=()=>{const ti=parseInt(btn.dataset.editTeam);state.editingTeamIdx=ti;state.editTeam=JSON.parse(JSON.stringify(state.savedTeams[ti]));render();};
+  });
+  document.querySelectorAll('[data-cancel-edit]').forEach(btn=>{btn.onclick=()=>{state.editingTeamIdx=-1;state.editTeam=null;render();};});
+  const editTeamName=document.getElementById('editTeamName');
+  if(editTeamName)editTeamName.oninput=()=>{if(state.editTeam)state.editTeam.name=editTeamName.value;};
+  document.querySelectorAll('[data-edit-player]').forEach(input=>{
+    input.oninput=()=>{if(state.editTeam)state.editTeam.players[parseInt(input.dataset.editPlayer)].name=input.value;};
+  });
+  document.querySelectorAll('[data-remove-edit]').forEach(btn=>{
+    btn.onclick=()=>{if(state.editTeam){state.editTeam.players.splice(parseInt(btn.dataset.removeEdit),1);render();}};
+  });
+  const addEditPlayer=document.getElementById('addEditPlayer');
+  if(addEditPlayer)addEditPlayer.onclick=()=>{
+    if(state.editTeam&&state.editTeam.players.length<8){
+      const used=state.editTeam.players.map(p=>p.emoji);
+      state.editTeam.players.push({name:'',emoji:EMOJI_LIST.find(e=>!used.includes(e))||'🎲',photo:null});
+      render();setTimeout(()=>{const ins=document.querySelectorAll('[data-edit-player]');ins[ins.length-1]?.focus();},50);
     }
   };
+  document.querySelectorAll('[data-save-edit]').forEach(btn=>{
+    btn.onclick=()=>{
+      const ti=parseInt(btn.dataset.saveEdit);const et=state.editTeam;if(!et)return;
+      const name=(et.name||'').trim();const valid=et.players.filter(p=>p.name.trim());
+      const errEl=document.getElementById('editErr');
+      if(!name){if(errEl)errEl.textContent='Team name cannot be empty.';return;}
+      if(valid.length<2){if(errEl)errEl.textContent='Need at least 2 members.';return;}
+      const dup=state.savedTeams.findIndex((t,i)=>i!==ti&&t.name.toLowerCase()===name.toLowerCase());
+      if(dup>=0){if(errEl)errEl.textContent=`"${name}" already exists.`;return;}
+      state.savedTeams[ti]={name,players:valid.map(p=>({name:p.name.trim(),emoji:p.emoji,photo:p.photo||null}))};
+      saveTeams(state.savedTeams);state.editingTeamIdx=-1;state.editTeam=null;render();
+    };
+  });
+  const startBtn=document.getElementById('startGame');
+  if(startBtn)startBtn.onclick=()=>{
+    state.players=state.players.filter(p=>p.name.trim());
+    if(state.players.length<2)return;
+    state.players=state.players.map(p=>({...p,joinedRound:0,startScore:0,eliminated:false,rejoined:false}));
+    state.screen='game';state.rounds=[];state.inputScores=state.players.map(()=>'');
+    state.showInput=false;state.showAddMid=false;render();
+  };
 }
+function checkStartBtn(){const btn=document.getElementById('startGame');if(btn)btn.disabled=state.players.filter(p=>p.name.trim()).length<2;}
 
-// ===== GAME =====
-function renderGame() {
-  const totals = getTotals();
-  const eliminated = totals.map(t => t > CUTOFF);
-  const activeCount = eliminated.filter(e => !e).length;
-  const gameOver = activeCount <= 1;
+/* ===== GAME ===== */
+function renderGame(){
+  const totals=getTotals();
+  const eliminated=state.players.map(p=>p.eliminated===true);
+  const activeCount=eliminated.filter(e=>!e).length;
+  const gameOver=activeCount<=1;
+  const sorted=[...state.players.map((p,i)=>({...p,total:totals[i],elim:eliminated[i],idx:i}))]
+    .sort((a,b)=>{if(a.elim&&!b.elim)return 1;if(!a.elim&&b.elim)return -1;return a.total-b.total;});
+  const winner=gameOver?sorted.find(p=>!p.elim):null;
 
-  const sorted = state.players
-    .map((p, i) => ({ ...p, total: totals[i], elim: eliminated[i], idx: i }))
-    .sort((a, b) => {
-      if (a.elim && !b.elim) return 1;
-      if (!a.elim && b.elim) return -1;
-      return a.total - b.total;
-    });
-
-  const winnerIdx = gameOver ? sorted.find(p => !p.elim)?.idx : -1;
-  const winner = winnerIdx >= 0 ? state.players[winnerIdx] : null;
-
-  let html = `<div class="game">
+  let html=`<div class="game">
     <div class="header">
       <div class="header-title">🃏 Rummy Night</div>
-      <div class="header-sub">Cutoff: ${CUTOFF} pts · ${state.rounds.length} rounds</div>
+      <div class="header-sub">Cutoff: ${CUTOFF} pts · ${state.rounds.length} rounds · ${state.players.length} players</div>
     </div>`;
 
-  if (state.celebration) {
-    const cls = state.celebration.type === 'elim' ? 'banner-elim' : 'banner-round';
-    html += `<div class="banner ${cls}">${state.celebration.text}</div>`;
-  }
+  if(state.celebration){const cls=state.celebration.type==='elim'?'banner-elim':'banner-round';html+=`<div class="banner ${cls}">${state.celebration.text}</div>`;}
+  if(gameOver&&winner){html+=`<div class="banner-winner"><div class="trophy">🏆</div><div class="name">${winner.photo?`<img src="${winner.photo}" style="width:32px;height:32px;border-radius:50%;object-fit:cover;vertical-align:middle;margin-right:6px">`:winner.emoji+' '}${winner.name} Wins!</div><div style="font-size:.82rem;opacity:.9;margin-top:4px">Game Over</div></div>`;}
 
-  if (gameOver && winner) {
-    html += `<div class="banner-winner">
-      <div class="trophy">🏆</div>
-      <div class="name">${winner.emoji} ${winner.name} Wins!</div>
-      <div style="font-size:.82rem;opacity:.9;margin-top:4px">Game Over</div>
-    </div>`;
-  }
-
-  // Leaderboard
-  sorted.forEach((p, rank) => {
-    const barW = p.elim ? 100 : Math.min((p.total / CUTOFF) * 100, 100);
-    const isLeading = rank === 0 && !p.elim;
-    const barColor = p.elim ? 'rgba(239,68,68,.15)' : barW > 80 ? 'rgba(245,158,11,.15)' : 'rgba(59,130,246,.1)';
-    const cardClass = p.elim ? 'out' : isLeading ? 'leading' : '';
-    const scoreColor = p.elim ? 'var(--red)' : isLeading && state.rounds.length > 0 ? 'var(--green)' : 'var(--text)';
-    const hint = p.elim ? 'OUT' : state.rounds.length === 0 ? 'Ready' : `${CUTOFF - p.total} to cutoff`;
-
-    html += `<div class="lb-card ${cardClass}">
+  sorted.forEach((p,rank)=>{
+    const barW=p.elim?100:Math.min((p.total/CUTOFF)*100,100);
+    const isLeading=rank===0&&!p.elim&&state.rounds.length>0;
+    const barColor=p.elim?'rgba(239,68,68,.15)':barW>80?'rgba(245,158,11,.15)':'rgba(59,130,246,.1)';
+    const cardClass=p.elim?'out':p.rejoined?'rejoined':isLeading?'leading':'';
+    const scoreColor=p.elim?'var(--red)':isLeading?'var(--green)':'var(--text)';
+    const hint=p.elim?'OUT — tap Rejoin to continue':state.rounds.length===0?'Ready':`${CUTOFF-p.total} to cutoff`;
+    const badge=p.rejoined?'🔄 ':p.elim?'💀 ':'';
+    const avHTML=p.photo?`<div class="lb-avatar"><img src="${p.photo}" alt="${p.name}"></div>`:`<div class="lb-avatar">${p.emoji}</div>`;
+    html+=`<div class="lb-card ${cardClass}">
       <div class="lb-bar" style="width:${barW}%;background:${barColor}"></div>
       <div class="lb-inner">
         <div class="lb-left">
-          <span class="lb-emoji">${p.emoji}</span>
+          ${avHTML}
           <div>
-            <div class="lb-name ${p.elim?'struck':''}">${p.name}${p.elim?' 💀':''}${isLeading && state.rounds.length>0?' 👑':''}</div>
+            <div class="lb-name ${p.elim?'struck':''}">${badge}${p.name}${isLeading?' 👑':''}</div>
             <div class="lb-hint">${hint}</div>
           </div>
         </div>
         <div class="lb-score" style="color:${scoreColor}">${p.total}</div>
       </div>
+      ${p.elim&&!gameOver?`<div class="lb-actions"><button class="lb-mini-btn btn-rejoin" data-rejoin="${p.idx}">🔄 Rejoin</button></div>`:''}
     </div>`;
   });
 
-  // Input area
-  if (!gameOver) {
-    if (!state.showInput) {
-      html += `<button class="add-round-btn" id="addRoundBtn">+ Add Round ${state.rounds.length + 1}</button>`;
-    } else {
-      html += `<div class="input-panel">
-        <div class="input-panel-title">Round ${state.rounds.length + 1}</div>`;
-
-      state.players.forEach((p, i) => {
-        if (eliminated[i]) return;
-        const val = state.inputScores[i];
-        html += `<div class="input-player">
+  if(!gameOver){
+    if(!state.showAddMid&&!state.showInput){
+      html+=`<div style="display:flex;gap:8px;margin-bottom:0">
+        <button class="add-round-btn" id="addRoundBtn" style="flex:2">+ Add Round ${state.rounds.length+1}</button>
+        <button class="add-round-btn" id="addMidBtn" style="flex:1;border-color:rgba(139,92,246,.5);background:rgba(139,92,246,.08);color:#c4b5fd">+ Player</button>
+      </div>`;
+    }
+    if(state.showAddMid){
+      html+=`<div class="add-mid-panel">
+        <div class="input-panel-title">➕ Add New Player</div>
+        <div class="player-row">
+          <div data-avatar-ctx="mid">${avatarHTML(state.midPlayer,44,'avatar')}</div>
+          <input class="player-name-input" id="midNameInput" placeholder="Player name" value="${state.midPlayer.name}" maxlength="15">
+        </div>
+        <div class="input-actions">
+          <button class="btn-cancel" id="cancelMid">Cancel</button>
+          <button class="btn-save" id="saveMid">Add to Game ✓</button>
+        </div>
+      </div>`;
+    }
+    if(state.showInput){
+      html+=`<div class="input-panel"><div class="input-panel-title">Round ${state.rounds.length+1}</div>`;
+      state.players.forEach((p,i)=>{
+        if(p.eliminated)return;
+        const val=state.inputScores[i];
+        const avHTML=p.photo?`<img src="${p.photo}" style="width:24px;height:24px;border-radius:50%;object-fit:cover;vertical-align:middle">`:`<span style="font-size:1.1rem">${p.emoji}</span>`;
+        html+=`<div class="input-player">
           <div class="input-player-header">
-            <span style="font-size:1.1rem">${p.emoji}</span>
+            ${avHTML}
             <span class="input-player-name">${p.name}</span>
-            ${val !== '' ? `<span class="input-selected">${val}</span>` : ''}
+            ${val!==''?`<span class="input-selected">${val}</span>`:''}
           </div>
           <div class="quick-scores">
-            ${QUICK_SCORES.map(v => `
-              <button class="qs-btn ${val===String(v)?'active':''}" data-qs-player="${i}" data-qs-val="${v}">${v}</button>
-            `).join('')}
+            ${QUICK_SCORES.map(v=>`<button class="qs-btn ${val===String(v)?'active':''}" data-qs-player="${i}" data-qs-val="${v}">${v}</button>`).join('')}
           </div>
-          <input class="score-input" type="number" inputmode="numeric" placeholder="or type score..."
-            value="${val}" data-score-player="${i}">
+          <input class="score-input" type="text" inputmode="numeric" placeholder="or type..." value="${val}" data-score-player="${i}">
+          <div class="score-err" style="color:var(--red);font-size:.75rem;min-height:16px;margin-top:3px"></div>
         </div>`;
       });
-
-      html += `<div class="input-actions">
+      html+=`<div class="input-actions">
         <button class="btn-cancel" id="cancelRound">Cancel</button>
         <button class="btn-save" id="saveRound">Save Round ✓</button>
-      </div></div>`;
+      </div>
+      ${state.scoreError?`<div style="color:var(--red);font-size:.8rem;margin-top:8px;text-align:center">⚠️ ${state.scoreError}</div>`:''}
+      </div>`;
     }
   }
 
-  // History
-  if (state.rounds.length > 0) {
-    const cols = state.players.length;
-    const gridCols = `50px repeat(${cols}, 1fr)`;
-    html += `<div class="history">
-      <div class="history-title">Round History</div>
-      <div class="history-table">
-        <div class="history-header" style="grid-template-columns:${gridCols}">
-          <div>#</div>
-          ${state.players.map(p => `<div class="history-cell">${p.emoji}</div>`).join('')}
-        </div>`;
-
-    state.rounds.forEach((round, ri) => {
-      html += `<div class="history-row" style="grid-template-columns:${gridCols}">
-        <div class="history-cell round-num">${ri + 1}</div>
-        ${round.map((s) => {
-          const cls = s === 0 ? 'zero' : s >= 80 ? 'high' : '';
-          return `<div class="history-cell ${cls}">${s === 0 ? '🏆' : s}</div>`;
-        }).join('')}
+  if(state.rounds.length>0){
+    const cols=state.players.length;
+    const gridCols=`40px repeat(${cols},1fr)`;
+    html+=`<div class="history"><div class="history-title">Round History</div><div class="history-table">
+      <div class="history-header" style="grid-template-columns:${gridCols}"><div>#</div>
+      ${state.players.map(p=>p.photo?`<div class="history-cell"><img class="h-avatar" src="${p.photo}"></div>`:`<div class="history-cell">${p.emoji}</div>`).join('')}</div>`;
+    state.rounds.forEach((round,ri)=>{
+      html+=`<div class="history-row" style="grid-template-columns:${gridCols}">
+        <div class="history-cell round-num">${ri+1}</div>
+        ${state.players.map((p,pi)=>{const s=round[pi];if(s==null)return`<div class="history-cell na">—</div>`;const cls=s===0?'zero':s>=80?'high':'';return`<div class="history-cell ${cls}">${s===0?'🏆':s}</div>`;}).join('')}
       </div>`;
     });
-    html += `</div></div>`;
+    html+=`</div></div>`;
   }
 
-  // Bottom actions
-  html += `<div class="bottom-actions">`;
-  if (state.rounds.length > 0) html += `<button class="btn-sm" id="undoBtn">↩ Undo</button>`;
-  html += `<button class="btn-sm danger" id="newGameBtn">🔄 New Game</button>`;
-  html += `</div></div>`;
-
+  html+=`<div class="bottom-actions">`;
+  if(state.rounds.length>0)html+=`<button class="btn-sm" id="undoBtn">↩ Undo</button>`;
+  html+=`<button class="btn-sm danger" id="newGameBtn">🔄 New Game</button></div></div>`;
   return html;
 }
 
-function bindGame() {
-  const totals = getTotals();
-  const eliminated = totals.map(t => t > CUTOFF);
+function bindGame(){
+  const totals=getTotals();
+  const eliminated=state.players.map(p=>p.eliminated===true);
 
-  const addBtn = document.getElementById('addRoundBtn');
-  if (addBtn) addBtn.onclick = () => { state.showInput = true; state.inputScores = state.players.map(() => ''); render(); };
+  document.querySelectorAll('[data-avatar-ctx]').forEach(el=>{el.onclick=()=>showAvatarPicker(el.dataset.avatarCtx);});
 
-  document.querySelectorAll('[data-qs-player]').forEach(btn => {
-    btn.onclick = () => {
-      state.inputScores[parseInt(btn.dataset.qsPlayer)] = btn.dataset.qsVal;
-      render();
+  document.querySelectorAll('[data-rejoin]').forEach(btn=>{
+    btn.onclick=()=>{
+      const idx=parseInt(btn.dataset.rejoin);
+      const maxScore=getActiveMax(totals,eliminated);
+      state.players[idx].eliminated=false;state.players[idx].rejoined=true;
+      state.players[idx].joinedRound=state.rounds.length;state.players[idx].startScore=maxScore;
+      state.inputScores[idx]='';
+      state.celebration={type:'round',text:`${state.players[idx].name} rejoined with ${maxScore} pts 🔄`};
+      setTimeout(()=>{state.celebration=null;render();},2500);render();
     };
   });
 
-  document.querySelectorAll('[data-score-player]').forEach(input => {
-    input.oninput = () => {
-      state.inputScores[parseInt(input.dataset.scorePlayer)] = input.value;
-    };
-    input.onchange = () => {
-      state.inputScores[parseInt(input.dataset.scorePlayer)] = input.value;
-      render();
-    };
-  });
+  const addMidBtn=document.getElementById('addMidBtn');
+  if(addMidBtn)addMidBtn.onclick=()=>{state.showAddMid=true;render();};
+  const midNameInput=document.getElementById('midNameInput');
+  if(midNameInput)midNameInput.oninput=()=>{state.midPlayer.name=midNameInput.value;};
+  const cancelMid=document.getElementById('cancelMid');
+  if(cancelMid)cancelMid.onclick=()=>{state.showAddMid=false;render();};
+  const saveMid=document.getElementById('saveMid');
+  if(saveMid)saveMid.onclick=()=>{
+    const name=(state.midPlayer.name||'').trim();if(!name){alert('Enter a player name');return;}
+    const newIdx=state.players.length;
+    state.rounds=state.rounds.map(r=>{const nr=[...r];nr[newIdx]=null;return nr;});
+    state.players.push({name,emoji:state.midPlayer.emoji,photo:state.midPlayer.photo||null,joinedRound:state.rounds.length,startScore:0,eliminated:false,rejoined:false});
+    state.inputScores.push('');state.midPlayer={name:'',emoji:'🎲',photo:null};state.showAddMid=false;
+    state.celebration={type:'round',text:`${name} joined the game! 🎉`};
+    setTimeout(()=>{state.celebration=null;render();},2500);render();
+  };
 
-  const cancelBtn = document.getElementById('cancelRound');
-  if (cancelBtn) cancelBtn.onclick = () => { state.showInput = false; render(); };
-
-  const saveBtn = document.getElementById('saveRound');
-  if (saveBtn) saveBtn.onclick = () => {
-    const currentTotals = getTotals();
-    const newScores = state.inputScores.map(s => parseInt(s) || 0);
-    state.rounds.push(newScores);
-    state.showInput = false;
-
-    const justElim = state.players.filter((_, i) => {
-      return currentTotals[i] + newScores[i] > CUTOFF && currentTotals[i] <= CUTOFF;
-    });
-    if (justElim.length > 0) {
-      state.celebration = { type: 'elim', text: `${justElim.map(p=>p.name).join(', ')} eliminated! 💀` };
-      setTimeout(() => { state.celebration = null; render(); }, 3000);
-    } else {
-      const zeros = state.players.filter((_, i) => newScores[i] === 0 && currentTotals[i] <= CUTOFF);
-      if (zeros.length > 0) {
-        state.celebration = { type: 'round', text: `${zeros.map(p=>p.name).join(', ')} won the round! 🎉` };
-        setTimeout(() => { state.celebration = null; render(); }, 2500);
+  const addRoundBtn=document.getElementById('addRoundBtn');
+  if(addRoundBtn)addRoundBtn.onclick=()=>{state.showInput=true;state.inputScores=state.players.map(()=>'');render();};
+  document.querySelectorAll('[data-qs-player]').forEach(btn=>{btn.onclick=()=>{state.inputScores[parseInt(btn.dataset.qsPlayer)]=btn.dataset.qsVal;render();};});
+  document.querySelectorAll('[data-score-player]').forEach(input=>{
+    input.oninput=()=>{
+      state.inputScores[parseInt(input.dataset.scorePlayer)]=input.value;
+      state.scoreError=null;
+      // Warn inline if value contains non-digit characters
+      const raw=input.value.trim();
+      const errEl=input.parentElement.querySelector('.score-err');
+      if(raw!==''&&!/^\d+$/.test(raw)){
+        if(errEl)errEl.textContent='⚠️ Numbers only (e.g. 25)';
+        input.style.borderColor='var(--red)';
+      } else {
+        if(errEl)errEl.textContent='';
+        input.style.borderColor='';
       }
+    };
+    input.onchange=()=>{
+      state.inputScores[parseInt(input.dataset.scorePlayer)]=input.value;
+    };
+  });
+  const cancelRound=document.getElementById('cancelRound');
+  if(cancelRound)cancelRound.onclick=()=>{state.showInput=false;render();};
+  const saveRound=document.getElementById('saveRound');
+  if(saveRound)saveRound.onclick=()=>{
+    const currentTotals=getTotals();
+    // Validate all active player scores
+    const invalid=state.players.filter((p,i)=>{
+      if(p.eliminated)return false;
+      const raw=String(state.inputScores[i]||'').trim();
+      return raw===''||!/^\d+$/.test(raw);
+    });
+    if(invalid.length>0){
+      state.scoreError=`Enter a valid score for: ${invalid.map(p=>p.name).join(', ')}`;
+      render();return;
+    }
+    state.scoreError=null;
+    const newScores=state.players.map((p,i)=>{if(p.eliminated)return null;return Math.max(0,parseInt(state.inputScores[i])||0);});
+    state.rounds.push(newScores);
+    const newTotals=getTotals();
+    const justElim=state.players.filter((p,i)=>!p.eliminated&&newTotals[i]>CUTOFF&&currentTotals[i]<=CUTOFF);
+    justElim.forEach(p=>{p.eliminated=true;p.rejoined=false;});
+    state.showInput=false;
+    if(justElim.length>0){
+      state.celebration={type:'elim',text:`${justElim.map(p=>p.name).join(', ')} eliminated! 💀 Tap Rejoin to continue`};
+      setTimeout(()=>{state.celebration=null;render();},3500);
+    }else{
+      const zeros=state.players.filter((p,i)=>!p.eliminated&&newScores[i]===0);
+      if(zeros.length>0){state.celebration={type:'round',text:`${zeros.map(p=>p.name).join(', ')} won the round! 🎉`};setTimeout(()=>{state.celebration=null;render();},2500);}
     }
     render();
   };
 
-  const undoBtn = document.getElementById('undoBtn');
-  if (undoBtn) undoBtn.onclick = () => { state.rounds.pop(); state.celebration = null; render(); };
-
-  const newBtn = document.getElementById('newGameBtn');
-  if (newBtn) newBtn.onclick = () => {
-    if (state.rounds.length > 0 && !confirm('Start a new game? Current scores will be lost.')) return;
-    state.screen = 'setup';
-    state.rounds = [];
-    state.showInput = false;
-    state.celebration = null;
-    render();
+  const undoBtn=document.getElementById('undoBtn');
+  if(undoBtn)undoBtn.onclick=()=>{state.rounds.pop();const nt=getTotals();state.players.forEach((p,i)=>{if(p.eliminated&&nt[i]<=CUTOFF)p.eliminated=false;});state.celebration=null;render();};
+  const newBtn=document.getElementById('newGameBtn');
+  if(newBtn)newBtn.onclick=()=>{
+    if(state.rounds.length>0&&!confirm('Start a new game? Scores will be lost.'))return;
+    state.screen='setup';state.setupTab='new';state.rounds=[];
+    state.showInput=false;state.showAddMid=false;state.celebration=null;
+    state.players=state.players.map(p=>({name:p.name,emoji:p.emoji,photo:p.photo||null}));render();
   };
 }
 
