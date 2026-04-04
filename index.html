@@ -7,19 +7,19 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Rummy">
 <meta name="theme-color" content="#0f172a">
-<title>Rummy Scorer v2</title>
-<!-- Rummy Scorer v2.0 | github.com/ajayashok1/Rummy -->
+<title>Rummy Scorer v3</title>
+<!-- Rummy Scorer v3.0 | github.com/ajayashok1/Rummy -->
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=JetBrains+Mono:wght@600&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 :root{
-  --bg:#1a1a2e;--bg2:#16213e;--bg3:#1a1a2e;
-  --card:rgba(255,255,255,0.08);--card2:rgba(255,255,255,0.12);
-  --border:rgba(255,153,51,0.25);--border2:rgba(255,153,51,0.45);
-  --text:#f5f0e0;--muted:#b0b0b0;--sub:#c8c8c8;
-  --gold:#ff9933;--gold2:#e68a2e;--gold-g:rgba(255,153,51,0.15);
+  --bg:#4a2006;--bg2:#5c2d0e;--bg3:#3d1a04;
+  --card:rgba(0,0,0,0.3);--card2:rgba(0,0,0,0.35);
+  --border:rgba(255,153,51,0.5);--border2:rgba(255,153,51,0.7);
+  --text:#fff8ee;--muted:#d4a574;--sub:#e8c9a0;
+  --gold:#ff9933;--gold2:#e68a2e;--gold-g:rgba(255,153,51,0.2);
   --blue:#60a5fa;--blue-g:rgba(96,165,250,0.15);
-  --green:#138808;--green-g:rgba(19,136,8,0.15);
+  --green:#34d399;--green-g:rgba(52,211,153,0.15);
   --red:#f87171;--red-g:rgba(248,113,113,0.12);
   --amber:#ff9933;--purple:#a78bfa;--purple-g:rgba(167,139,250,0.15);
 }
@@ -27,15 +27,18 @@ html,body{height:100%;overflow-x:hidden}
 body{
   font-family:'Outfit',sans-serif;
   background:
-    linear-gradient(180deg, #ff9933 0%, #ff9933 30%, #ffffff 30%, #ffffff 50%, #138808 50%, #138808 80%, #1a1a2e 80%, #1a1a2e 100%);
+    radial-gradient(ellipse at 50% 25%, rgba(255,153,51,0.15) 0%, transparent 60%),
+    radial-gradient(ellipse at 50% 50%, #4a2006 0%, #3a1805 50%, #2a1004 100%);
   background-attachment:fixed;
   color:var(--text);min-height:100vh;min-height:100dvh;
   padding:env(safe-area-inset-top) 16px env(safe-area-inset-bottom);
 }
-.container{max-width:480px;margin:0 auto;padding:12px 0 24px}
+.container{max-width:480px;margin:0 auto;padding:12px 0 24px;position:relative}
+body::before{content:'♠ ♥ ♦ ♣ ♠ ♥ ♦ ♣ ♠ ♥ ♦ ♣ ♠ ♥ ♦ ♣ ♠ ♥ ♦ ♣';position:fixed;top:0;left:0;right:0;bottom:0;font-size:3.5rem;letter-spacing:1.5rem;line-height:5rem;word-spacing:1rem;color:rgba(255,153,51,0.06);pointer-events:none;overflow:hidden;z-index:0;word-break:break-all;padding:20px}
+.container{position:relative;z-index:1}
 
 /* AVATAR */
-.avatar{width:56px;height:56px;border-radius:50%;border:2px solid var(--border);background:var(--card);font-size:1.6rem;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden;position:relative}
+.avatar{width:64px;height:64px;border-radius:50%;border:2.5px solid var(--border);background:var(--card);font-size:1.8rem;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden;position:relative}
 .avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%}
 .avatar:active{opacity:.8}
 .avatar-overlay{position:absolute;inset:0;background:rgba(0,0,0,.45);border-radius:50%;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s}
@@ -53,7 +56,7 @@ body{
 .setup-label{font-weight:700;font-size:.85rem;color:var(--gold);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px}
 .player-inputs{display:flex;flex-direction:column;gap:8px}
 .player-row{display:flex;gap:8px;align-items:center;animation:fadeUp .3s ease backwards}
-.player-name-input{flex:1;padding:13px 14px;border-radius:10px;border:1.5px solid var(--border);background:rgba(0,0,0,.3);color:var(--text);font-family:'Outfit',sans-serif;font-size:1.15rem;font-weight:600}
+.player-name-input{flex:1;padding:14px 16px;border-radius:10px;border:1.5px solid var(--border);background:rgba(0,0,0,.3);color:var(--text);font-family:'Outfit',sans-serif;font-size:1.25rem;font-weight:600}
 .player-name-input:focus{outline:none;border-color:var(--gold)}
 .player-name-input::placeholder{color:var(--muted);font-weight:400}
 .remove-btn{width:36px;height:36px;border-radius:8px;border:none;background:var(--red-g);color:var(--red);font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
@@ -117,12 +120,12 @@ body{
 .lb-bar{position:absolute;left:0;top:0;bottom:0;transition:width .5s ease}
 .lb-inner{display:flex;align-items:center;justify-content:space-between;position:relative}
 .lb-left{display:flex;align-items:center;gap:10px}
-.lb-avatar{width:48px;height:48px;border-radius:50%;border:2px solid var(--border2);background:var(--card);font-size:1.5rem;display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0}
+.lb-avatar{width:56px;height:56px;border-radius:50%;border:2.5px solid var(--border2);background:var(--card);font-size:1.7rem;display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0}
 .lb-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%}
-.lb-name{font-weight:700;font-size:1.1rem}
+.lb-name{font-weight:700;font-size:1.25rem}
 .lb-name.struck{text-decoration:line-through}
-.lb-hint{font-size:.7rem;color:var(--sub)}
-.lb-score{font-size:1.3rem;font-weight:800;font-family:'JetBrains Mono',monospace}
+.lb-hint{font-size:.8rem;color:var(--sub)}
+.lb-score{font-size:1.5rem;font-weight:800;font-family:'JetBrains Mono',monospace}
 .lb-actions{display:flex;gap:5px;margin-top:8px;position:relative}
 .lb-mini-btn{padding:5px 10px;border-radius:7px;border:none;font-size:.72rem;font-weight:700;cursor:pointer}
 .btn-rejoin{background:var(--purple-g);color:var(--purple);border:1px solid rgba(167,139,250,.3)}
@@ -131,7 +134,7 @@ body{
 .input-panel-title{font-weight:700;font-size:.95rem;margin-bottom:14px;color:var(--gold)}
 .input-player{margin-bottom:16px}
 .input-player-header{display:flex;align-items:center;gap:8px;margin-bottom:6px}
-.input-player-name{font-weight:600;font-size:.9rem}
+.input-player-name{font-weight:600;font-size:1.1rem}
 .input-selected{margin-left:auto;background:var(--gold-g);border:1px solid rgba(251,191,36,.4);padding:2px 10px;border-radius:6px;font-size:.85rem;font-weight:700;color:var(--gold);font-family:'JetBrains Mono',monospace}
 .quick-scores{display:flex;gap:5px;flex-wrap:wrap}
 .qs-btn{padding:8px 10px;border-radius:8px;border:1.5px solid var(--border);background:rgba(0,0,0,.2);color:var(--sub);font-size:.82rem;font-weight:600;cursor:pointer;min-width:36px;font-family:'JetBrains Mono',monospace}
@@ -307,7 +310,7 @@ function renderSetup(){
 
   return `<div class="setup">
     <div class="setup-title">🃏 Rummy Scorer</div>
-    <div class="setup-sub">v2.0 · Cutoff at ${CUTOFF} pts · Tap avatar to change</div>
+    <div class="setup-sub">${formatDate(new Date().toISOString())} · v3.0 · Cutoff at ${CUTOFF} pts</div>
     <div class="tab-row">
       <button class="tab-btn ${state.setupTab==='new'?'active':''}" data-tab="new">New Game</button>
       <button class="tab-btn ${state.setupTab==='teams'?'active':''}" data-tab="teams">Teams ${teams.length>0?`(${teams.length})`:''}</button>

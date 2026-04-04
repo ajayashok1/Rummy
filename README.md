@@ -22,16 +22,19 @@ The app will appear as an icon on your home screen!
 ## 🚀 Version History
 
 ### v3.0 — Current
-*Indian Flag Theme · Game History · Improved UX · Rule Enforcement*
+*Dark Saffron Theme · Card Suits · Game History · Improved UX · Rule Enforcement*
 
 #### ✨ New Features
 
-**🇮🇳 Indian Flag Theme**
-- Background redesigned with saffron, white, and green bands resembling the Indian flag
-- Updated color palette — saffron gold accents replacing the old green casino look
+**🎨 Dark Saffron Theme**
+- Rich dark saffron/burnt orange background with warm golden spotlight
+- Subtle card suit symbols (♠ ♥ ♦ ♣) scattered across the background
+- Saffron-orange accents on titles, borders, buttons, and highlights
+- Dark card surfaces with saffron borders for a premium card-game feel
 
 **📅 Game Date & History**
-- Each game records the date and time when it starts, shown in the game header
+- Current date shown on setup screen and game screen headers
+- Each game records the date and time when it starts
 - Games are automatically saved when they end (winner declared) or when starting a new game
 - New **Past Games** tab on the setup screen to browse all previous games
 - Tap any past game to expand and view the full round-by-round scorecard
@@ -39,8 +42,8 @@ The app will appear as an icon on your home screen!
 - Stores up to 50 past games in localStorage
 
 **🔍 Bigger Avatars & Names**
-- Player avatars increased from 44px to 56px in setup, 36px to 48px on the leaderboard
-- Player name font size increased for better readability on mobile
+- Setup avatars 64px, leaderboard avatars 56px — much larger and clearer
+- Player names, scores, and hints all bumped up in font size for mobile readability
 
 **📷 Photo Compression**
 - Uploaded photos are now resized to 120x120px thumbnails and compressed as JPEG at 70% quality
