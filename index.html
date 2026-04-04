@@ -174,7 +174,7 @@ body{
 
 <script>
 const CUTOFF=220;
-const EMOJI_LIST=['🦁','🦊','🐯','🐼','🦋','🐺','🦅','🐬','🦈','🐙','🦄','🐲','🔥','⚡','💎','🌟','👑','🎯','🎲','🃏','♠️','♣️','♥️','♦️','🍀','🌶️','🍕','🎸','🚀','🏆','⭐','🌊','🎭','🎪','🧊','💫'];
+const EMOJI_LIST=['👤','👥','🎯','🎲','🃏','♠️','♣️','♥️','♦️','👑','🏆','⭐','💎','🔥','⚡','🌟','💫','🚀','🎸','🎭','🍀','🌊','🧊','🎪','🦁','🦊','🐯','🐼','🦋','🐺','🦅','🐬','🦈','🐙','🦄','🐲'];
 const QUICK_SCORES=[0,25,100];
 
 function loadTeams(){try{return JSON.parse(localStorage.getItem('rummy_teams'))||[];}catch(e){return[];}}
@@ -201,7 +201,7 @@ function formatTime(iso){const d=new Date(iso);return d.toLocaleTimeString('en-I
 
 let state=loadState()||{
   screen:'setup',setupTab:'new',confirmDeleteIdx:-1,
-  players:[{name:'',emoji:'🦁',photo:null},{name:'',emoji:'🦊',photo:null}],
+  players:[{name:'',emoji:'👤',photo:null},{name:'',emoji:'👥',photo:null}],
   rounds:[],showInput:false,inputScores:[],
   emojiCtx:null,celebration:null,
   gameDate:null,
@@ -465,7 +465,7 @@ function renderSetup(){
 function bindSetup(){
   document.querySelectorAll('[data-tab]').forEach(btn=>{btn.onclick=()=>{
     if(btn.dataset.tab==='new'&&state.setupTab!=='new'){
-      state.players=[{name:'',emoji:'🦁',photo:null},{name:'',emoji:'🦊',photo:null}];
+      state.players=[{name:'',emoji:'👤',photo:null},{name:'',emoji:'👥',photo:null}];
       state.teamNameInput='';
     }
     state.setupTab=btn.dataset.tab;state.teamNameErr='';state.expandedGame=-1;render();
@@ -791,7 +791,7 @@ function bindGame(){
     if(keepPlayers){
       state.players=state.players.map(p=>({name:p.name,emoji:p.emoji,photo:p.photo||null}));
     }else{
-      state.players=[{name:'',emoji:'🦁',photo:null},{name:'',emoji:'🦊',photo:null}];
+      state.players=[{name:'',emoji:'👤',photo:null},{name:'',emoji:'👥',photo:null}];
     }
     render();
   };
@@ -799,7 +799,7 @@ function bindGame(){
 
 // Reset players on fresh load if on setup screen
 if(state.screen==='setup'&&state.setupTab==='new'){
-  state.players=[{name:'',emoji:'🦁',photo:null},{name:'',emoji:'🦊',photo:null}];
+  state.players=[{name:'',emoji:'👤',photo:null},{name:'',emoji:'👥',photo:null}];
   state.teamNameInput='';
 }
 render();
