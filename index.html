@@ -309,7 +309,8 @@ function renderSetup(){
 
   return `<div class="setup">
     <div class="setup-title">🃏 Rummy Scorer</div>
-    <div class="setup-sub">${formatDate(new Date().toISOString())} · v3.0</div>
+    <div class="setup-sub">v3.0</div>
+    <div style="text-align:center;font-size:.78rem;color:var(--muted);margin-bottom:4px">${formatDate(new Date().toISOString())}</div>
     <div class="tab-row">
       <button class="tab-btn ${state.setupTab==='new'?'active':''}" data-tab="new">New Game</button>
       <button class="tab-btn ${state.setupTab==='teams'?'active':''}" data-tab="teams">Teams ${teams.length>0?`(${teams.length})`:''}</button>
@@ -796,6 +797,11 @@ function bindGame(){
   };
 }
 
+// Reset players on fresh load if on setup screen
+if(state.screen==='setup'&&state.setupTab==='new'){
+  state.players=[{name:'',emoji:'🦁',photo:null},{name:'',emoji:'🦊',photo:null}];
+  state.teamNameInput='';
+}
 render();
 </script>
 </body>
