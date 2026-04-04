@@ -34,7 +34,6 @@ body{
   padding:env(safe-area-inset-top) 16px env(safe-area-inset-bottom);
 }
 .container{max-width:480px;margin:0 auto;padding:12px 0 24px;position:relative}
-body::before{content:'♠ ♥ ♦ ♣ ♠ ♥ ♦ ♣ ♠ ♥ ♦ ♣ ♠ ♥ ♦ ♣ ♠ ♥ ♦ ♣';position:fixed;top:0;left:0;right:0;bottom:0;font-size:3.5rem;letter-spacing:1.5rem;line-height:5rem;word-spacing:1rem;color:rgba(255,153,51,0.06);pointer-events:none;overflow:hidden;z-index:0;word-break:break-all;padding:20px;opacity:0.4}
 .container{position:relative;z-index:1}
 
 /* AVATAR */
@@ -310,16 +309,45 @@ function renderSetup(){
 
   return `<div class="setup">
     <div class="setup-title">🃏 Rummy Scorer</div>
-    <div class="setup-sub">${formatDate(new Date().toISOString())} · v3.0 · Cutoff at ${CUTOFF} pts</div>
+    <div class="setup-sub">${formatDate(new Date().toISOString())} · v3.0</div>
     <div class="tab-row">
       <button class="tab-btn ${state.setupTab==='new'?'active':''}" data-tab="new">New Game</button>
       <button class="tab-btn ${state.setupTab==='teams'?'active':''}" data-tab="teams">Teams ${teams.length>0?`(${teams.length})`:''}</button>
       <button class="tab-btn ${state.setupTab==='history'?'active':''}" data-tab="history">Past Games</button>
+      <button class="tab-btn ${state.setupTab==='rules'?'active':''}" data-tab="rules">Rules</button>
     </div>
+
+    ${state.setupTab==='rules'?`
+    <div class="setup-section">
+      <div class="setup-label">Game Rules</div>
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;font-size:.95rem;line-height:1.7">
+        <div style="font-weight:700;color:var(--gold);margin-bottom:8px;font-size:1.05rem">🃏 Rummy Scoring</div>
+        <div style="margin-bottom:12px">
+          <span style="color:var(--gold);font-weight:700">Cutoff:</span> ${CUTOFF} points — exceed this and you're eliminated
+        </div>
+        <div style="margin-bottom:12px">
+          <span style="color:var(--gold);font-weight:700">Round Winner:</span> The player who scores <span style="color:var(--gold);font-weight:800">0</span> wins the round 🏆
+        </div>
+        <div style="margin-bottom:12px">
+          <span style="color:var(--gold);font-weight:700">Game Winner:</span> Last player remaining under the cutoff wins 👑
+        </div>
+        <div style="margin-bottom:12px">
+          <span style="color:var(--gold);font-weight:700">Rejoin:</span> Eliminated players can rejoin with the highest active player's score — only if that score is ≤ 170
+        </div>
+        <div style="margin-bottom:12px">
+          <span style="color:var(--gold);font-weight:700">Quick Scores:</span> Use 0, 25, 100 buttons or type any score manually
+        </div>
+        <div>
+          <span style="color:var(--gold);font-weight:700">Teams:</span> Save your regular group and load them instantly for the next game
+        </div>
+      </div>
+    </div>
+    `:''}
 
     ${state.setupTab==='history'?`
     <div class="setup-section">
       <div class="setup-label">Past Games</div>
+      <div style="font-size:.75rem;color:var(--muted);margin-bottom:10px">Last 50 games are saved. Older games are removed automatically.</div>
       ${(()=>{
         const gh=loadGameHistory();
         if(gh.length===0)return '<div class="no-teams">No past games yet. Play a game first!</div>';
@@ -375,7 +403,9 @@ function renderSetup(){
       </div>
       <div class="err-msg">${state.teamNameErr||''}</div>
     </div>
-    `:`
+    `:''}
+
+    ${state.setupTab==='teams'?`
     <div class="setup-section">
       <div class="setup-label">Saved Teams</div>
       ${teams.length===0?`<div class="no-teams">No saved teams yet.<br>Create players in New Game tab and save.</div>`:''}
@@ -423,16 +453,22 @@ function renderSetup(){
             <div class="err-msg" id="editErr"></div>
           </div>`:''}
         </div>`).join('')}
-    </div>`}
+    </div>`:''}
 
-    ${state.setupTab!=='history'?`<button class="start-btn" id="startGame" ${state.players.filter(p=>p.name.trim()).length<2?'disabled':''}>
+    ${state.setupTab!=='history'&&state.setupTab!=='rules'?`<button class="start-btn" id="startGame" ${state.players.filter(p=>p.name.trim()).length<2?'disabled':''}>
       Start Game →
     </button>`:''}
   </div>`;
 }
 
 function bindSetup(){
-  document.querySelectorAll('[data-tab]').forEach(btn=>{btn.onclick=()=>{state.setupTab=btn.dataset.tab;state.teamNameErr='';state.expandedGame=-1;render();};});
+  document.querySelectorAll('[data-tab]').forEach(btn=>{btn.onclick=()=>{
+    if(btn.dataset.tab==='new'&&state.setupTab!=='new'){
+      state.players=[{name:'',emoji:'🦁',photo:null},{name:'',emoji:'🦊',photo:null}];
+      state.teamNameInput='';
+    }
+    state.setupTab=btn.dataset.tab;state.teamNameErr='';state.expandedGame=-1;render();
+  };});
 
   // Past games expand/delete
   document.querySelectorAll('[data-expand-game]').forEach(el=>{
