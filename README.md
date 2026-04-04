@@ -21,7 +21,52 @@ The app will appear as an icon on your home screen!
 
 ## 🚀 Version History
 
-### v2.0 — Current
+### v3.0 — Current
+*Indian Flag Theme · Game History · Improved UX · Rule Enforcement*
+
+#### ✨ New Features
+
+**🇮🇳 Indian Flag Theme**
+- Background redesigned with saffron, white, and green bands resembling the Indian flag
+- Updated color palette — saffron gold accents replacing the old green casino look
+
+**📅 Game Date & History**
+- Each game records the date and time when it starts, shown in the game header
+- Games are automatically saved when they end (winner declared) or when starting a new game
+- New **Past Games** tab on the setup screen to browse all previous games
+- Tap any past game to expand and view the full round-by-round scorecard
+- Delete individual game records with confirmation
+- Stores up to 50 past games in localStorage
+
+**🔍 Bigger Avatars & Names**
+- Player avatars increased from 44px to 56px in setup, 36px to 48px on the leaderboard
+- Player name font size increased for better readability on mobile
+
+**📷 Photo Compression**
+- Uploaded photos are now resized to 120x120px thumbnails and compressed as JPEG at 70% quality
+- Reduces each photo from ~2-5MB to ~3-5KB, preventing localStorage overflow
+- Fixes the issue where photos would silently fail to load
+
+#### 🔧 Gameplay Changes
+
+**Simplified Score Input**
+- Quick-score buttons reduced from 9 options to just **0, 25, 100** plus manual input
+- Cleaner, less cluttered score entry
+
+**Single Zero Per Round**
+- Only 1 player can score 0 (win) per round — entering multiple zeros shows a validation error
+
+**Rejoin Cap at 170**
+- Eliminated players can only rejoin if the highest active player's score is 170 or below
+- If any active player exceeds 170, the Rejoin button is disabled with a message
+
+**New Game Player Choice**
+- When starting a new game, a second prompt asks whether to keep the same players or reset
+- No more accidentally losing your player setup
+
+---
+
+### v2.0
 *Photo Avatars · Team Management · Mid-Game Features · Casino Theme*
 
 #### ✨ New Features
@@ -81,7 +126,8 @@ The app will appear as an icon on your home screen!
 - **Cutoff:** 220 points — exceed this and you're eliminated
 - **Round winner:** Player with 0 points wins the round 🏆
 - **Game winner:** Last player remaining under the cutoff wins
-- **Rejoin:** Eliminated players can rejoin with the highest active player's score
+- **Rejoin:** Eliminated players can rejoin with the highest active player's score (only if max active score ≤ 170)
+- **One winner per round:** Only 1 player can score 0 in a single round
 
 ---
 
