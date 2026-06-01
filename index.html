@@ -868,6 +868,21 @@ if(state.screen==='setup'&&state.setupTab==='new'){
   state.teamNameInput='';
 }
 render();
+
+// Service Worker registration + auto-update
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('sw.js').then(reg=>{
+    reg.addEventListener('updatefound',()=>{
+      const newWorker=reg.installing;
+      newWorker.addEventListener('statechange',()=>{
+        if(newWorker.state==='activated'&&navigator.serviceWorker.controller){
+          window.location.reload();
+        }
+      });
+    });
+    setInterval(()=>reg.update(),60*60*1000);
+  });
+}
 </script>
 </body>
 </html>
