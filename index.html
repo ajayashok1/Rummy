@@ -7,8 +7,8 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Rummy">
 <meta name="theme-color" content="#0f172a">
-<title>Rummy Scorer v3</title>
-<!-- Rummy Scorer v3.0 | github.com/ajayashok1/Rummy -->
+<title>Rummy Scorer v4</title>
+<!-- Rummy Scorer v4.0 | github.com/ajayashok1/Rummy -->
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=JetBrains+Mono:wght@600&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -173,7 +173,8 @@ body{
 <input type="file" id="photoInput" accept="image/*" style="display:none">
 
 <script>
-const CUTOFF=220;
+const DEFAULT_CUTOFF=220;
+const DEFAULT_REENTRY=170;
 const EMOJI_LIST=['👤','👥','🎯','🎲','🃏','♠️','♣️','♥️','♦️','👑','🏆','⭐','💎','🔥','⚡','🌟','💫','🚀','🎸','🎭','🍀','🌊','🧊','🎪','🦁','🦊','🐯','🐼','🦋','🐺','🦅','🐬','🦈','🐙','🦄','🐲'];
 const QUICK_SCORES=[0,25,100];
 
@@ -191,7 +192,7 @@ function saveCurrentGame(){
     date:state.gameDate||new Date().toISOString(),
     players:state.players.map((p,i)=>({name:p.name,emoji:p.emoji,total:totals[i],eliminated:p.eliminated})),
     rounds:state.rounds,
-    cutoff:CUTOFF
+    cutoff:state.cutoff
   });
   if(history.length>50)history.length=50;
   saveGameHistory(history);
@@ -201,6 +202,7 @@ function formatTime(iso){const d=new Date(iso);return d.toLocaleTimeString('en-I
 
 let state=loadState()||{
   screen:'setup',setupTab:'new',confirmDeleteIdx:-1,
+  cutoff:DEFAULT_CUTOFF,reentryScore:DEFAULT_REENTRY,
   players:[{name:'',emoji:'👤',photo:null},{name:'',emoji:'👥',photo:null}],
   rounds:[],showInput:false,inputScores:[],
   emojiCtx:null,celebration:null,
@@ -211,6 +213,8 @@ let state=loadState()||{
   editingTeamIdx:-1,editTeam:null,
   expandedGame:-1
 };
+if(!state.cutoff)state.cutoff=DEFAULT_CUTOFF;
+if(!state.reentryScore)state.reentryScore=DEFAULT_REENTRY;
 
 // Avatar helpers
 function avatarHTML(p,size=44,cls='avatar'){
@@ -309,7 +313,7 @@ function renderSetup(){
 
   return `<div class="setup">
     <div class="setup-title">🃏 Rummy Scorer</div>
-    <div class="setup-sub">v3.0</div>
+    <div class="setup-sub">v4.0</div>
     <div style="text-align:center;font-size:.78rem;color:var(--muted);margin-bottom:4px">${formatDate(new Date().toISOString())}</div>
     <div class="tab-row">
       <button class="tab-btn ${state.setupTab==='new'?'active':''}" data-tab="new">New Game</button>
@@ -324,7 +328,7 @@ function renderSetup(){
       <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;font-size:.95rem;line-height:1.7">
         <div style="font-weight:700;color:var(--gold);margin-bottom:8px;font-size:1.05rem">🃏 Rummy Scoring</div>
         <div style="margin-bottom:12px">
-          <span style="color:var(--gold);font-weight:700">Cutoff:</span> ${CUTOFF} points — exceed this and you're eliminated
+          <span style="color:var(--gold);font-weight:700">Cutoff:</span> User-configurable (default ${DEFAULT_CUTOFF}) — exceed this and you're eliminated
         </div>
         <div style="margin-bottom:12px">
           <span style="color:var(--gold);font-weight:700">Round Winner:</span> The player who scores <span style="color:var(--gold);font-weight:800">0</span> wins the round 🏆
@@ -333,7 +337,7 @@ function renderSetup(){
           <span style="color:var(--gold);font-weight:700">Game Winner:</span> Last player remaining under the cutoff wins 👑
         </div>
         <div style="margin-bottom:12px">
-          <span style="color:var(--gold);font-weight:700">Rejoin:</span> Eliminated players can rejoin with the highest active player's score — only if that score is ≤ 170
+          <span style="color:var(--gold);font-weight:700">Rejoin:</span> Eliminated players can rejoin with the highest active player's score — only if that score is ≤ the re-entry score (default ${DEFAULT_REENTRY})
         </div>
         <div style="margin-bottom:12px">
           <span style="color:var(--gold);font-weight:700">Quick Scores:</span> Use 0, 25, 100 buttons or type any score manually
@@ -384,6 +388,20 @@ function renderSetup(){
     `:''}
 
     ${state.setupTab==='new'?`
+    <div class="setup-section">
+      <div class="setup-label">Game Settings</div>
+      <div style="display:flex;gap:8px">
+        <div style="flex:1">
+          <div style="font-size:.75rem;color:var(--muted);margin-bottom:4px">Cutoff Score</div>
+          <input class="player-name-input" type="number" inputmode="numeric" id="cutoffInput" value="${state.cutoff}" min="100" max="500" style="text-align:center;font-size:1.1rem;padding:10px">
+        </div>
+        <div style="flex:1">
+          <div style="font-size:.75rem;color:var(--muted);margin-bottom:4px">Re-entry Score</div>
+          <input class="player-name-input" type="number" inputmode="numeric" id="reentryInput" value="${state.reentryScore}" min="170" max="${state.cutoff}" style="text-align:center;font-size:1.1rem;padding:10px">
+        </div>
+      </div>
+      <div style="font-size:.72rem;color:var(--muted);margin-top:6px">Eliminated players can rejoin if max active score ≤ re-entry score</div>
+    </div>
     <div class="setup-section">
       <div class="setup-label">Players (${state.players.length})</div>
       <div class="player-inputs">
@@ -484,6 +502,28 @@ function bindSetup(){
     el.onclick=()=>showAvatarPicker(el.dataset.avatarCtx);
   });
 
+  const cutoffInput=document.getElementById('cutoffInput');
+  if(cutoffInput){
+    cutoffInput.oninput=()=>{state.cutoff=parseInt(cutoffInput.value)||DEFAULT_CUTOFF;saveState();};
+    cutoffInput.onchange=()=>{
+      let v=parseInt(cutoffInput.value)||DEFAULT_CUTOFF;
+      if(v<100)v=100;if(v>500)v=500;
+      state.cutoff=v;cutoffInput.value=v;
+      if(state.reentryScore>v)state.reentryScore=v;
+      const ri=document.getElementById('reentryInput');if(ri){ri.max=v;if(parseInt(ri.value)>v)ri.value=v;}
+      saveState();
+    };
+  }
+  const reentryInput=document.getElementById('reentryInput');
+  if(reentryInput){
+    reentryInput.oninput=()=>{state.reentryScore=parseInt(reentryInput.value)||DEFAULT_REENTRY;saveState();};
+    reentryInput.onchange=()=>{
+      let v=parseInt(reentryInput.value)||DEFAULT_REENTRY;
+      if(v<170)v=170;if(v>state.cutoff)v=state.cutoff;
+      state.reentryScore=v;reentryInput.value=v;saveState();
+    };
+  }
+
   document.querySelectorAll('[data-player-idx]').forEach(input=>{
     input.oninput=()=>{state.players[parseInt(input.dataset.playerIdx)].name=input.value;saveState();checkStartBtn();};
   });
@@ -581,19 +621,23 @@ function renderGame(){
   let html=`<div class="game">
     <div class="header">
       <div class="header-title">🃏 Rummy Night</div>
-      <div class="header-sub">${state.gameDate?formatDate(state.gameDate)+' · ':''}Cutoff: ${CUTOFF} pts · ${state.rounds.length} rounds · ${state.players.length} players</div>
+      <div class="header-sub">${state.gameDate?formatDate(state.gameDate)+' · ':''}Cutoff: ${state.cutoff} · ${state.rounds.length} rounds · ${state.players.length} players</div>
+      <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:8px">
+        <span style="font-size:.78rem;color:var(--muted)">Re-entry Score:</span>
+        <input type="number" inputmode="numeric" id="gameReentryInput" value="${state.reentryScore}" min="170" max="${state.cutoff}" style="width:65px;padding:5px 8px;border-radius:8px;border:1.5px solid var(--border);background:rgba(0,0,0,.3);color:var(--gold);font-family:'JetBrains Mono',monospace;font-size:.85rem;font-weight:700;text-align:center">
+      </div>
     </div>`;
 
   if(state.celebration){const cls=state.celebration.type==='elim'?'banner-elim':'banner-round';html+=`<div class="banner ${cls}">${state.celebration.text}</div>`;}
   if(gameOver&&winner){html+=`<div class="banner-winner"><div class="trophy">🏆</div><div class="name">${winner.photo?`<img src="${winner.photo}" style="width:32px;height:32px;border-radius:50%;object-fit:cover;vertical-align:middle;margin-right:6px">`:winner.emoji+' '}${winner.name} Wins!</div><div style="font-size:.82rem;opacity:.9;margin-top:4px">Game Over</div></div>`;}
 
   sorted.forEach((p,rank)=>{
-    const barW=p.elim?100:Math.min((p.total/CUTOFF)*100,100);
+    const barW=p.elim?100:Math.min((p.total/state.cutoff)*100,100);
     const isLeading=rank===0&&!p.elim&&state.rounds.length>0;
     const barColor=p.elim?'rgba(239,68,68,.15)':barW>80?'rgba(245,158,11,.15)':'rgba(59,130,246,.1)';
     const cardClass=p.elim?'out':p.rejoined?'rejoined':isLeading?'leading':'';
     const scoreColor=p.elim?'var(--red)':isLeading?'var(--green)':'var(--text)';
-    const hint=p.elim?'OUT — tap Rejoin to continue':state.rounds.length===0?'Ready':`${CUTOFF-p.total} to cutoff`;
+    const hint=p.elim?'OUT — tap Rejoin to continue':state.rounds.length===0?'Ready':`${state.cutoff-p.total} to cutoff`;
     const badge=p.rejoined?'🔄 ':p.elim?'💀 ':'';
     const avHTML=p.photo?`<div class="lb-avatar"><img src="${p.photo}" alt="${p.name}"></div>`:`<div class="lb-avatar">${p.emoji}</div>`;
     html+=`<div class="lb-card ${cardClass}">
@@ -608,7 +652,7 @@ function renderGame(){
         </div>
         <div class="lb-score" style="color:${scoreColor}">${p.total}</div>
       </div>
-      ${p.elim&&!gameOver?`<div class="lb-actions"><button class="lb-mini-btn btn-rejoin" data-rejoin="${p.idx}" ${getActiveMax(totals,eliminated)>170?'disabled style="opacity:.4;pointer-events:none"':''}>🔄 Rejoin${getActiveMax(totals,eliminated)>170?' (blocked: active player >170)':''}</button></div>`:''}
+      ${p.elim&&!gameOver?`<div class="lb-actions"><button class="lb-mini-btn btn-rejoin" data-rejoin="${p.idx}" ${getActiveMax(totals,eliminated)>state.reentryScore?'disabled style="opacity:.4;pointer-events:none"':''}>🔄 Rejoin${getActiveMax(totals,eliminated)>state.reentryScore?' (blocked: active player >'+state.reentryScore+')':''}</button></div>`:''}
     </div>`;
   });
 
@@ -685,6 +729,16 @@ function bindGame(){
   const totals=getTotals();
   const eliminated=state.players.map(p=>p.eliminated===true);
 
+  const gameReentryInput=document.getElementById('gameReentryInput');
+  if(gameReentryInput){
+    gameReentryInput.oninput=()=>{state.reentryScore=parseInt(gameReentryInput.value)||DEFAULT_REENTRY;saveState();};
+    gameReentryInput.onchange=()=>{
+      let v=parseInt(gameReentryInput.value)||DEFAULT_REENTRY;
+      if(v<170)v=170;if(v>state.cutoff)v=state.cutoff;
+      state.reentryScore=v;gameReentryInput.value=v;saveState();render();
+    };
+  }
+
   document.querySelectorAll('[data-avatar-ctx]').forEach(el=>{el.onclick=()=>showAvatarPicker(el.dataset.avatarCtx);});
 
   document.querySelectorAll('[data-rejoin]').forEach(btn=>{
@@ -729,6 +783,9 @@ function bindGame(){
       if(raw!==''&&!/^\d+$/.test(raw)){
         if(errEl)errEl.textContent='⚠️ Numbers only (e.g. 25)';
         input.style.borderColor='var(--red)';
+      } else if(raw!==''&&parseInt(raw)>100){
+        if(errEl)errEl.textContent='⚠️ Max score is 100';
+        input.style.borderColor='var(--red)';
       } else {
         if(errEl)errEl.textContent='';
         input.style.borderColor='';
@@ -754,8 +811,16 @@ function bindGame(){
       render();return;
     }
     state.scoreError=null;
+    const overMax=state.players.filter((p,i)=>{
+      if(p.eliminated)return false;
+      const v=parseInt(state.inputScores[i])||0;
+      return v>100;
+    });
+    if(overMax.length>0){
+      state.scoreError=`Max score per round is 100! Fix: ${overMax.map(p=>p.name).join(', ')}`;
+      render();return;
+    }
     const newScores=state.players.map((p,i)=>{if(p.eliminated)return null;return Math.max(0,parseInt(state.inputScores[i])||0);});
-    // Only 1 person can have 0 in a single round
     const zeroCount=newScores.filter(s=>s===0).length;
     if(zeroCount>1){
       state.scoreError='Only 1 player can score 0 per round!';
@@ -763,7 +828,7 @@ function bindGame(){
     }
     state.rounds.push(newScores);
     const newTotals=getTotals();
-    const justElim=state.players.filter((p,i)=>!p.eliminated&&newTotals[i]>CUTOFF&&currentTotals[i]<=CUTOFF);
+    const justElim=state.players.filter((p,i)=>!p.eliminated&&newTotals[i]>state.cutoff&&currentTotals[i]<=state.cutoff);
     justElim.forEach(p=>{p.eliminated=true;p.rejoined=false;});
     // Auto-save game when it ends
     const activeAfter=state.players.filter(p=>!p.eliminated).length;
@@ -780,7 +845,7 @@ function bindGame(){
   };
 
   const undoBtn=document.getElementById('undoBtn');
-  if(undoBtn)undoBtn.onclick=()=>{state.rounds.pop();const nt=getTotals();state.players.forEach((p,i)=>{if(p.eliminated&&nt[i]<=CUTOFF)p.eliminated=false;});state.celebration=null;render();};
+  if(undoBtn)undoBtn.onclick=()=>{state.rounds.pop();const nt=getTotals();state.players.forEach((p,i)=>{if(p.eliminated&&nt[i]<=state.cutoff)p.eliminated=false;});state.celebration=null;render();};
   const newBtn=document.getElementById('newGameBtn');
   if(newBtn)newBtn.onclick=()=>{
     if(state.rounds.length>0&&!confirm('Start a new game? Scores will be saved.'))return;
