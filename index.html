@@ -652,7 +652,8 @@ function renderGame(){
         </div>
         <div class="lb-score" style="color:${scoreColor}">${p.total}</div>
       </div>
-      ${p.elim&&!gameOver?`<div class="lb-actions"><button class="lb-mini-btn btn-rejoin" data-rejoin="${p.idx}" ${getActiveMax(totals,eliminated)>state.reentryScore?'disabled style="opacity:.4;pointer-events:none"':''}>🔄 Rejoin${getActiveMax(totals,eliminated)>state.reentryScore?' (blocked: active player >'+state.reentryScore+')':''}</button></div>`:''}
+      ${p.elim&&!gameOver&&p.eliminatedAtRound===state.rounds.length?`<div class="lb-actions"><button class="lb-mini-btn btn-rejoin" data-rejoin="${p.idx}" ${getActiveMax(totals,eliminated)>state.reentryScore?'disabled style="opacity:.4;pointer-events:none"':''}>🔄 Rejoin${getActiveMax(totals,eliminated)>state.reentryScore?' (blocked: active player >'+state.reentryScore+')':''}</button></div>`:''}
+      ${p.elim&&!gameOver&&p.eliminatedAtRound!==state.rounds.length?`<div class="lb-hint" style="margin-top:4px;color:var(--red);font-size:.72rem">❌ Missed rejoin window</div>`:''}
     </div>`;
   });
 
@@ -829,7 +830,7 @@ function bindGame(){
     state.rounds.push(newScores);
     const newTotals=getTotals();
     const justElim=state.players.filter((p,i)=>!p.eliminated&&newTotals[i]>state.cutoff&&currentTotals[i]<=state.cutoff);
-    justElim.forEach(p=>{p.eliminated=true;p.rejoined=false;});
+    justElim.forEach(p=>{p.eliminated=true;p.rejoined=false;p.eliminatedAtRound=state.rounds.length;});
     // Auto-save game when it ends
     const activeAfter=state.players.filter(p=>!p.eliminated).length;
     if(activeAfter<=1)saveCurrentGame();
